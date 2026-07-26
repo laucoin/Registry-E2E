@@ -2,16 +2,26 @@
   "name": "registry-e2e",
   "version": "0.0.0",
   "private": true,
-  "description": "Registry parity suite (ADR 021) — authored against the Angular app, run against both apps.",
+  "description": "Registry end-to-end suite — user-visible journeys run against the Nuxt app.",
   "scripts": {
-    "test:angular": "playwright test --project=angular",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
     "test:nuxt": "playwright test --project=nuxt",
-    "report": "playwright show-report"
+    "test:nuxt-session": "playwright test --project=nuxt-session",
+    "report": "playwright show-report",
+    "contributors:add": "all-contributors add",
+    "contributors:generate": "all-contributors generate",
+    "contributors:check": "all-contributors check"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
     "@playwright/test": "^1.50.0",
+    "@stylistic/eslint-plugin": "^5.10.0",
     "@types/node": "^24.0.0",
-    "typescript": "^5.6.0"
+    "all-contributors-cli": "^6.26.1",
+    "eslint": "^10.8.0",
+    "typescript": "^5.6.0",
+    "typescript-eslint": "^8.65.0"
   },
   "packageManager": "pnpm@11.17.0"
 }

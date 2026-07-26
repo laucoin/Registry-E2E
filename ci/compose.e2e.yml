@@ -1,0 +1,159 @@
+# Full E2E stack for CI (Nuxt target). Every service runs on the host
+# network so the browser on the runner and the containers all address the IdP,
+# backend and app at the same localhost:<port> — this avoids the OIDC
+# split-horizon problem (a browser-facing redirect URL that a container cannot
+# resolve). Host networking is Linux-only, which matches the ubuntu runner.
+#
+# Images are pulled, not built (the backend and frontend PR pipelines publish
+# them): set BACKEND_IMAGE and NUXT_IMAGE. Secrets and other tunables come from
+# the environment — see .github/workflows/e2e.yml.
+services:
+  registry-postgresql:
+    image: docker.io/library/postgres:18-alpine
+    network_mode: host
+    environment:
+      POSTGRES_USER: ${PG_USER:-postgres}
+      POSTGRES_PASSWORD: ${PG_PASS}
+      POSTGRES_MULTIPLE_DATABASES: ${PG_AUTHENTIK_DB:-authentik},${PG_REGISTRY_DB:-registry}
+    volumes:
+      - ./postgres/init-multiple-dbs.sh:/docker-entrypoint-initdb.d/init-multiple-dbs.sh:ro
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${PG_USER:-postgres}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
+  registry-authentik-server:
+    image: ghcr.io/goauthentik/server:2026.8.0
+    command: server
+    network_mode: host
+    environment:
+      AUTHENTIK_POSTGRESQL__HOST: localhost
+      AUTHENTIK_POSTGRESQL__NAME: ${PG_AUTHENTIK_DB:-authentik}
+      AUTHENTIK_POSTGRESQL__USER: ${PG_AUTHENTIK_DB:-authentik}
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS}
+      AUTHENTIK_SECRET_KEY: ${AU_SECRET_KEY}
+      AUTHENTIK_BOOTSTRAP_EMAIL: ${AU_EMAIL}
+      AUTHENTIK_BOOTSTRAP_PASSWORD: ${AU_PASS}
+      # Consumed by the blueprint below to seed the parity-suite test users and
+      # the cleanup app-password token. The blueprint derives the four secondary
+      # usernames from E2E_USERNAME and reuses E2E_PASSWORD for all of them.
+      E2E_USERNAME: ${E2E_USERNAME}
+      E2E_PASSWORD: ${E2E_PASSWORD}
+      E2E_EMAIL: ${E2E_EMAIL:-e2e@example.test}
+      E2E_CLEANUP_TOKEN: ${E2E_CLEANUP_TOKEN}
+    volumes:
+      - ./authentik/blueprints:/blueprints/custom:ro
+    depends_on:
+      registry-postgresql:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "ak", "healthcheck" ]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 60s
+
+  registry-authentik-worker:
+    image: ghcr.io/goauthentik/server:2026.8.0
+    command: worker
+    network_mode: host
+    environment:
+      AUTHENTIK_POSTGRESQL__HOST: localhost
+      AUTHENTIK_POSTGRESQL__NAME: ${PG_AUTHENTIK_DB:-authentik}
+      AUTHENTIK_POSTGRESQL__USER: ${PG_AUTHENTIK_DB:-authentik}
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS}
+      AUTHENTIK_SECRET_KEY: ${AU_SECRET_KEY}
+      AUTHENTIK_BOOTSTRAP_EMAIL: ${AU_EMAIL}
+      AUTHENTIK_BOOTSTRAP_PASSWORD: ${AU_PASS}
+      E2E_USERNAME: ${E2E_USERNAME}
+      E2E_PASSWORD: ${E2E_PASSWORD}
+      E2E_EMAIL: ${E2E_EMAIL:-e2e@example.test}
+    volumes:
+      - ./authentik/blueprints:/blueprints/custom:ro
+    depends_on:
+      registry-postgresql:
+        condition: service_healthy
+
+  registry-backend:
+    image: ${BACKEND_IMAGE}
+    network_mode: host
+    environment:
+      DATASOURCE_BASE_URL: localhost:5432
+      DATASOURCE_PASSWORD: ${PG_PASS}
+      EXTERNAL_CORS_URLS: http://localhost:3000
+      IDP_JWKS_URI: http://localhost:9000/application/o/registry/jwks/
+      IDP_AUTHORIZATION_URI: http://localhost:9000/application/o/authorize/
+      IDP_TOKEN_URI: http://localhost:9000/application/o/token/
+      IDP_END_SESSION_URI: http://localhost:9000/application/o/registry/end-session/
+      IDP_PRIVATE_CLIENT_ID: ${IDP_PRIVATE_CLIENT_ID}
+      IDP_PRIVATE_CLIENT_SECRET: ${IDP_PRIVATE_CLIENT_SECRET}
+      # The backend's `e2e` profile (application-e2e.yml) exists for this suite and
+      # zeroes both rate-limit categories. The per-user limits are sized for
+      # humans; the suite issues the same privileged calls back to back and trips
+      # them (429), which reads as a journey failure rather than the protection
+      # working — the 429 + Retry-After contract stays a manual check (2026-07-29
+      # non-regression plan §API contract). The profile deliberately carries no
+      # Flyway seed location, so the stack still migrates only and ci/seed/seed.sql
+      # remains the single source of fixtures.
+      SPRING_PROFILES_ACTIVE: e2e
+    depends_on:
+      registry-postgresql:
+        condition: service_healthy
+      registry-authentik-server:
+        condition: service_healthy
+
+  registry-nuxt:
+    image: ${NUXT_IMAGE}
+    network_mode: host
+    environment:
+      NUXT_REGISTRY_BASE_URL: http://localhost:8081
+      # Authentik's issuer carries a trailing slash; openid-client requires an
+      # exact match against the discovery document.
+      NUXT_IDP_ISSUER: http://localhost:9000/application/o/registry/
+      NUXT_IDP_CLIENT_ID: ${NUXT_IDP_CLIENT_ID}
+      NUXT_IDP_CLIENT_SECRET: ${NUXT_IDP_CLIENT_SECRET}
+      NUXT_SESSION_SECRET: ${NUXT_SESSION_SECRET}
+      NUXT_PRODUCTION: "false"
+    depends_on:
+      registry-backend:
+        condition: service_started
+      registry-authentik-server:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "node", "-e", "fetch('http://localhost:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))" ]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 20s
+
+  # The same image with a deliberately tiny session lifetime, so the idle-timeout
+  # and absolute-cap journeys can be observed in seconds instead of the 30 min /
+  # 8 h production values. It runs as a separate instance because
+  # lowering the lifetime on :3000 would expire every other journey mid-run; the
+  # `nuxt-session` Playwright project targets this port and nothing else.
+  registry-nuxt-short-session:
+    image: ${NUXT_IMAGE}
+    network_mode: host
+    environment:
+      PORT: "3001"
+      NUXT_REGISTRY_BASE_URL: http://localhost:8081
+      NUXT_IDP_ISSUER: http://localhost:9000/application/o/registry/
+      NUXT_IDP_CLIENT_ID: ${NUXT_IDP_CLIENT_ID}
+      NUXT_IDP_CLIENT_SECRET: ${NUXT_IDP_CLIENT_SECRET}
+      NUXT_SESSION_SECRET: ${NUXT_SESSION_SECRET}
+      NUXT_SESSION_IDLE_MAX_AGE: "30"
+      NUXT_SESSION_MAX_AGE: "90"
+      NUXT_PRODUCTION: "false"
+    depends_on:
+      registry-backend:
+        condition: service_started
+      registry-authentik-server:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "node", "-e", "fetch('http://localhost:3001/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))" ]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 20s

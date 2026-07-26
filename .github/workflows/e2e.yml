@@ -1,0 +1,142 @@
+name: E2E (Nuxt)
+
+# Full parity suite against the Nuxt target. It stands up the whole
+# stack from PUBLISHED images (the backend and frontend PR pipelines push them)
+# plus Postgres and Authentik, then runs Playwright from the runner host.
+#
+# Heavy and secret-dependent, so it does not run on every PR: trigger it by hand
+# (pick the image tags) and on merges to main. Fork PRs cannot read the secrets
+# it needs.
+on:
+  workflow_dispatch:
+    inputs:
+      backend_tag:
+        description: Backend image tag to test against
+        default: main
+      nuxt_tag:
+        description: Nuxt (frontend) image tag to test against
+        default: main
+  push:
+    branches: [ main ]
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  nuxt-e2e:
+    name: Parity suite (Nuxt)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    env:
+      # Published images to run. Override the tag via workflow_dispatch inputs.
+      BACKEND_IMAGE: ${{ vars.REGISTRY }}/${{ github.repository_owner }}/registry-backend:${{ github.event.inputs.backend_tag || 'main' }}
+      NUXT_IMAGE: ${{ vars.REGISTRY }}/${{ github.repository_owner }}/registry-frontend:${{ github.event.inputs.nuxt_tag || 'main' }}
+
+      # Stack wiring (non-secret defaults; the compose reads these from the env).
+      PG_USER: postgres
+      PG_REGISTRY_DB: registry
+      PG_AUTHENTIK_DB: authentik
+
+      # Secrets consumed by ci/compose.e2e.yml and the suite.
+      PG_PASS: ${{ secrets.PG_PASS }}
+      AU_SECRET_KEY: ${{ secrets.AU_SECRET_KEY }}
+      AU_EMAIL: ${{ secrets.AU_EMAIL }}
+      AU_PASS: ${{ secrets.AU_PASS }}
+      IDP_PRIVATE_CLIENT_ID: ${{ secrets.IDP_PRIVATE_CLIENT_ID }}
+      IDP_PRIVATE_CLIENT_SECRET: ${{ secrets.IDP_PRIVATE_CLIENT_SECRET }}
+      NUXT_IDP_CLIENT_ID: ${{ secrets.NUXT_IDP_CLIENT_ID }}
+      NUXT_IDP_CLIENT_SECRET: ${{ secrets.NUXT_IDP_CLIENT_SECRET }}
+      NUXT_SESSION_SECRET: ${{ secrets.NUXT_SESSION_SECRET }}
+      E2E_USERNAME: ${{ secrets.E2E_USERNAME }}
+      E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+      E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
+      # App-password token seeded into Authentik (by the blueprint) and used by
+      # the setup/teardown project cleanup — see tests/global-*.ts.
+      E2E_CLEANUP_TOKEN: ${{ secrets.E2E_CLEANUP_TOKEN }}
+
+      # Where the suite (run on the host) reaches the stack. Every service is on
+      # the host network, so a single localhost horizon works for all of them.
+      E2E_NUXT_URL: http://localhost:3000
+      # Short-session instance (ci/compose.e2e.yml) — only the session-lifetime
+      # journeys target it; setting this enables the `nuxt-session` project.
+      E2E_NUXT_SESSION_URL: http://localhost:3001
+      E2E_BACKEND_URL: http://localhost:8081
+      E2E_ISSUER: http://localhost:9000/application/o/registry
+      E2E_TOKEN_URL: http://localhost:9000/application/o/token/
+      # The cleanup token grant runs against the confidential `registry`
+      # provider the backend trusts.
+      E2E_TEST_CLIENT: ${{ secrets.NUXT_IDP_CLIENT_ID }}
+      E2E_TEST_CLIENT_SECRET: ${{ secrets.NUXT_IDP_CLIENT_SECRET }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Log in to the container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ vars.REGISTRY }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      # pnpm version is read from package.json "packageManager".
+      - uses: pnpm/action-setup@v6
+
+      - name: Set up Node (with pnpm store cache)
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browser
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Start the stack
+        run: docker compose -f ci/compose.e2e.yml up -d --wait --wait-timeout 300
+
+      - name: Wait for the backend to accept connections
+        # The backend runs a distroless image (no shell for a container
+        # healthcheck) and exposes neither /actuator/health nor swagger-ui by
+        # default, so readiness is a bare TCP connect to the Spring port.
+        run: |
+          for i in $(seq 1 60); do
+            if (echo > /dev/tcp/localhost/8081) >/dev/null 2>&1; then
+              echo "backend listening"; exit 0
+            fi
+            sleep 5
+          done
+          echo "backend did not start listening in time" >&2
+          exit 1
+
+      - name: Seed the test-account data
+        # Promote the IdP test user to administrator and link the `-member`
+        # account with the default global role, so the identity/role/users
+        # journeys and every refusal assertion have their expected fixtures.
+        run: bash ci/seed/seed.sh
+
+      - name: Run the parity suite
+        run: pnpm test:nuxt
+
+      - name: Run the session-lifetime journeys
+        # Separate instance with a 30 s idle timeout and a 90 s absolute cap.
+        run: pnpm test:nuxt-session
+
+      - name: Dump stack logs on failure
+        if: failure()
+        run: docker compose -f ci/compose.e2e.yml logs --no-color --tail 200
+
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+      - name: Tear down the stack
+        if: always()
+        run: docker compose -f ci/compose.e2e.yml down -v

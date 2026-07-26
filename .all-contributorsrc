@@ -1,0 +1,57 @@
+{
+  "projectName": "Registry-E2E",
+  "projectOwner": "laucoin",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "commitConvention": "angular",
+  "commitType": "docs",
+  "contributorsPerLine": 7,
+  "contributors": [
+    {
+      "login": "laucoin",
+      "name": "Luc AUCOIN",
+      "avatar_url": "https://avatars.githubusercontent.com/u/31480129?v=4",
+      "profile": "https://doc.laucoin.fr/resume",
+      "contributions": [
+        "projectManagement",
+        "ideas",
+        "code",
+        "maintenance",
+        "infra"
+      ]
+    },
+    {
+      "login": "lvicainne",
+      "name": "Louis VICAINNE",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1641160?v=4",
+      "profile": "https://github.com/lvicainne",
+      "contributions": [
+        "infra",
+        "ideas"
+      ]
+    },
+    {
+      "login": "Usinouv",
+      "name": "Usinouv",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13047412?v=4",
+      "profile": "https://github.com/Usinouv",
+      "contributions": [
+        "ideas"
+      ]
+    },
+    {
+      "login": "ctruillet",
+      "name": "Clément Truillet",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43933447?v=4",
+      "profile": "https://github.com/ctruillet",
+      "contributions": [
+        "ideas"
+      ]
+    }
+  ]
+}
