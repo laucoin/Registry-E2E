@@ -1,0 +1,108 @@
+Registry Source-Available License (v1.0)
+Project: Registry-E2E
+
+Copyright (c) 2026 Luc Aucoin
+Contact:  luc.aucoin1998@gmail.com
+GitHub:   https://github.com/laucoin
+LinkedIn: https://www.linkedin.com/in/luc-aucoin/
+
+All rights reserved, except as expressly granted below.
+
+This is NOT an open-source license. It is a source-available license: the
+source code and images are made public so that you may use them and
+contribute to them, but the project may not be taken and redistributed as
+your own.
+
+-------------------------------------------------------------------------------
+1. DEFINITIONS
+-------------------------------------------------------------------------------
+"The Work" means all content in this repository, including source code,
+images, assets, and documentation.
+
+"The Creator" means Luc Aucoin, identified by the contact, GitHub, and
+LinkedIn details above.
+
+"You" means any individual or entity exercising the permissions granted by
+this License.
+
+-------------------------------------------------------------------------------
+2. GRANT OF PERMISSIONS
+-------------------------------------------------------------------------------
+Subject to the conditions in Sections 3 and 4, the Creator grants You a
+worldwide, royalty-free, non-exclusive license to:
+
+  (a) view, download, and run the Work;
+  (b) use the Work and its images for any purpose, INCLUDING COMMERCIAL USE;
+  (c) open issues, discussions, and other reports against the Work; and
+  (d) create modifications of the Work SOLELY for the purpose of submitting
+      them back to the Creator as a contribution (see Section 5).
+
+-------------------------------------------------------------------------------
+3. ATTRIBUTION (REQUIRED)
+-------------------------------------------------------------------------------
+Any use of the Work or its images — including commercial use — MUST give
+clear and visible credit to the Creator. The attribution must:
+
+  (a) name the Creator as "Luc Aucoin"; and
+  (b) include at least one of the following contact/reference links:
+        - Email:    luc.aucoin1998@gmail.com
+        - GitHub:   https://github.com/laucoin
+        - LinkedIn: https://www.linkedin.com/in/luc-aucoin/
+
+The attribution must appear in a place reasonably visible to end users
+(e.g. an "About"/credits screen, documentation, or an accompanying notice),
+and must not imply that the Creator endorses You or your use.
+
+-------------------------------------------------------------------------------
+4. RESTRICTIONS (NO FORKING / NO REDISTRIBUTION AS YOUR OWN)
+-------------------------------------------------------------------------------
+Except as permitted in Section 2(d) and Section 5, You may NOT:
+
+  (a) fork, republish, mirror, or redistribute the Work, in whole or in
+      part, as a separate or independent project;
+  (b) present the Work (or any substantial part of it) as your own creation;
+  (c) create or distribute a derivative, competing, or standalone project
+      based on the Work; or
+  (d) remove, alter, or obscure any copyright, attribution, or license
+      notice contained in the Work.
+
+Note: On public code-hosting platforms, a "fork" may be technically
+required to submit a contribution. Such a fork is permitted ONLY as a
+temporary, working copy used to prepare and submit a contribution back to
+the Creator's repository (Section 5). Any other use of a fork — including
+keeping it as a standalone, published, or maintained project — is not
+permitted.
+
+-------------------------------------------------------------------------------
+5. CONTRIBUTIONS
+-------------------------------------------------------------------------------
+You are welcome to contribute. By submitting any contribution (for example,
+a pull request or patch) to the Creator, You:
+
+  (a) represent that You have the right to submit it; and
+  (b) grant the Creator a perpetual, worldwide, royalty-free, irrevocable
+      license to use, modify, sublicense, and incorporate your contribution
+      into the Work under this License or any future version of it.
+
+-------------------------------------------------------------------------------
+6. TERMINATION
+-------------------------------------------------------------------------------
+Any breach of this License automatically and immediately terminates the
+permissions granted to You. Upon termination, You must cease all use of the
+Work and destroy all copies in your possession, except for copies of your
+own contributions.
+
+-------------------------------------------------------------------------------
+7. DISCLAIMER OF WARRANTY AND LIABILITY
+-------------------------------------------------------------------------------
+THE WORK IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+CREATOR BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN
+ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN
+CONNECTION WITH THE WORK OR THE USE OR OTHER DEALINGS IN THE WORK.
+
+-------------------------------------------------------------------------------
+For permissions beyond the scope of this License (for example, to fork or
+redistribute the project independently), contact the Creator at
+luc.aucoin1998@gmail.com.
