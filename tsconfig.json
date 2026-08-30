@@ -1,0 +1,47 @@
+{
+  // Mirrors Registry-Frontend's effective compiler options (its tsconfig.json
+  // extends the Nuxt-generated .nuxt/tsconfig.json). This repo has no Nuxt
+  // layer, so the same strictness and module-resolution posture is declared
+  // directly. Vue/Nuxt-only settings are dropped: JSX (jsx / jsxImportSource
+  // vue), the bundler extension affordances (allowImportingTsExtensions,
+  // allowArbitraryExtensions, libReplacement) and the webworker lib. Node
+  // types replace the empty `types` array Nuxt injects for the runtime.
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "preserve",
+    "moduleResolution": "Bundler",
+    "moduleDetection": "force",
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "types": [
+      "node"
+    ],
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noImplicitThis": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "useDefineForClassFields": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": [
+    "playwright.config.ts",
+    "tests/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "playwright-report",
+    "test-results",
+    ".auth"
+  ]
+}
