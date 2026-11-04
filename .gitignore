@@ -1,0 +1,49 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# Config
+public/settings/env.json
+
+# Compiled output
+/dist
+/tmp
+/out-tsc
+/bazel-out
+
+# Node
+/node_modules
+npm-debug.log
+yarn-error.log
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+*.iml
+
+# Miscellaneous
+.env
+.auth/
+.features-gen/
+playwright-report/
+test-results/
+REVIEW-STATUS.md
+
+# Claude Code (skills and shared settings are versioned)
+.claude/settings.local.json
+
+# System files
+.DS_Store
+Thumbs.db
+.nx/cache
+.nx/workspace-data
+blob-report/

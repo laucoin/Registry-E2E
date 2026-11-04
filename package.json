@@ -1,0 +1,33 @@
+{
+	"name": "registry-e2e",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"bddgen": "bddgen",
+		"test": "bddgen --tags \"not @wip\" && rm -rf blob-report && (PW_BLOB=1 PLAYWRIGHT_BLOB_OUTPUT_FILE_NAME=parallel.zip playwright test --project=parallel --project=role-coordinator --project=role-participant --project=matrix --pass-with-no-tests; a=$?; PW_BLOB=1 PLAYWRIGHT_BLOB_OUTPUT_FILE_NAME=exclusive.zip playwright test --project=exclusive --pass-with-no-tests; b=$?; playwright merge-reports --reporter=html ./blob-report; exit $((a || b)))",
+		"test:smoke": "bddgen --tags \"@smoke and not @wip\" && rm -rf blob-report && (PW_BLOB=1 PLAYWRIGHT_BLOB_OUTPUT_FILE_NAME=parallel.zip playwright test --project=parallel --project=role-coordinator --project=role-participant --project=matrix --pass-with-no-tests; a=$?; PW_BLOB=1 PLAYWRIGHT_BLOB_OUTPUT_FILE_NAME=exclusive.zip playwright test --project=exclusive --pass-with-no-tests; b=$?; playwright merge-reports --reporter=html ./blob-report; exit $((a || b)))",
+		"test:feature": "bddgen --tags \"not @wip\" && playwright test",
+		"test:ui": "bddgen --tags \"not @wip\" && playwright test --ui",
+		"report": "playwright show-report",
+		"typecheck": "tsc --noEmit",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix",
+		"format": "prettier --write .",
+		"format:check": "prettier --check ."
+	},
+	"devDependencies": {
+		"@eslint/js": "^10.0.1",
+		"@playwright/test": "^1.64.1",
+		"@types/node": "^26.6.5",
+		"dotenv": "^18.0.9",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-playwright": "^2.12.2",
+		"eslint-plugin-prettier": "^5.5.7",
+		"eslint-plugin-simple-import-sort": "^14.0.0",
+		"playwright-bdd": "^9.2.1",
+		"prettier": "^3.9.10",
+		"typescript": "^6.0.3",
+		"typescript-eslint": "^8.72.1"
+	},
+	"packageManager": "pnpm@12.18.0+sha512.9d7882d5dc82147ecfc4e062aa34834e0ad0296710a1837a1115ae012127d36b7109e321ac1598a1dd0a65597681b1e99917e12ed0d749eae91187943363beb3"
+}

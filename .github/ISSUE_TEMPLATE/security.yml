@@ -1,0 +1,51 @@
+name: "🔒 Sécurité & Vulnérabilité"
+description: Traitement d'une faille, durcissement ou correction de vulnérabilité
+title: "🔒 sec: "
+labels: [ "security" ]
+body:
+  - type: textarea
+    id: vulnerability-description
+    attributes:
+      label: "⚠️ Description de la vulnérabilité"
+      description: Résumé du vecteur d'attaque, de la faiblesse ou de l'alerte de sécurité.
+      placeholder: "Une dépendance obsolète expose une injection de code potentielle via..."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: "🚨 Niveau de sévérité"
+      options:
+        - Critique
+        - Élevée
+        - Moyenne
+        - Faible
+    validations:
+      required: true
+
+  - type: input
+    id: cve-identifier
+    attributes:
+      label: "🏷️ Identifiant CVE / Alerte Dependabot"
+      placeholder: "ex. CVE-2026-12345 ou Dependabot #42"
+    validations:
+      required: false
+
+  - type: textarea
+    id: remediation
+    attributes:
+      label: "🛡️ Mesure corrective appliquée"
+      description: Précisez la solution (mise à niveau de version, filtrage d'entrée, durcissement d'en-têtes).
+      placeholder: "La version de la dépendance est mise à niveau vers la version patchée..."
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: verification
+    attributes:
+      label: "✅ Vérification & Clôture"
+      options:
+        - label: "Un test de sécurité ou un contrôle dédié confirme la neutralisation de la faille"
+        - label: "Le scanner de vulnérabilités ou Dependabot ne remonte plus l'alerte"
+        - label: "Aucun effet de bord n'affecte les flux applicatifs existants"

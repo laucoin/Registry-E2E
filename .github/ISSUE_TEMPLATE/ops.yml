@@ -1,0 +1,41 @@
+name: "🚀 Ops & Infrastructure"
+description: Travaux d'infrastructure, pipelines CI/CD, outillage développeur et déploiement
+title: "🚀 ops: "
+labels: [ "operations" ]
+body:
+  - type: textarea
+    id: objective
+    attributes:
+      label: "🎯 Objectif & Motivation"
+      description: Décrivez l'amélioration apportée à l'outillage, aux conteneurs ou aux pipelines.
+      placeholder: "Ce ticket configure la mise en cache des dépendances dans le pipeline CI..."
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: "🔧 Périmètre d'intervention"
+      options:
+        - label: "**Pipelines CI/CD** : GitHub Actions, optimisation des étapes de build ou du cache"
+        - label: "**Conteneurisation & Environnements** : Dockerfile, Docker Compose, configurations de run"
+        - label: "**Configurations & Secrets** : Ajout ou rotation de tokens et variables d'environnement"
+        - label: "**Monitoring & Observabilité** : Métriques, alertes et collecte de traces"
+
+  - type: textarea
+    id: metrics-impact
+    attributes:
+      label: "📈 Gains et impacts attendus"
+      description: Réduction du temps de build, simplification des commandes locales, fiabilisation.
+      placeholder: "Réduction du temps de build de 5 minutes à 2 minutes..."
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: validation-plan
+    attributes:
+      label: "🛡️ Plan de validation"
+      options:
+        - label: "Les modifications sont testées sur une branche dédiée ou un runner de test"
+        - label: "Les secrets nécessaires sont configurés dans les paramètres du dépôt"
+        - label: "Le pipeline s'exécute avec succès sur l'ensemble de la matrice de validation"

@@ -1,0 +1,69 @@
+name: "🚀 Demande de fonctionnalité / Feature Request"
+description: Proposer une idée, une amélioration ou une nouvelle fonctionnalité logicielle
+title: "🚀 feat: "
+labels: [ "enhancement" ]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci pour votre contribution ! Décrivez votre besoin simplement. Les sections techniques sont optionnelles et peuvent être complétées ultérieurement par l'équipe technique.
+
+  - type: textarea
+    id: context
+    attributes:
+      label: "🎯 Contexte & Besoin utilisateur"
+      description: Quel est le problème rencontré ou la valeur ajoutée souhaitée ?
+      placeholder: "En tant que [type d'utilisateur], je souhaite [action ou besoin] afin de [objectif / gain attendu]."
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: "💡 Comportement souhaité"
+      description: Décrivez le fonctionnement attendu du point de vue de l'utilisateur.
+      placeholder: "L'utilisateur accède à un nouveau bouton qui permet de..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: visual-references
+    attributes:
+      label: "🎨 Maquettes, captures d'écran ou exemples"
+      description: Glissez-déposez ici des captures d'écran, schémas ou liens Figma.
+      placeholder: "Collez vos liens ou glissez vos images ici..."
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        ### 🛠️ Cadrage technique (Réservé à l'équipe technique - Optionnel à la saisie)
+
+  - type: checkboxes
+    id: technical-impacts
+    attributes:
+      label: Impacts techniques transverses
+      options:
+        - label: "**Frontend** : Composants graphiques, formulaires, gestion d'état, navigation"
+        - label: "**Backend** : Endpoints API, logique métier, services de persistance"
+        - label: "**Contrats d'API & Payloads** : Spécification des requêtes / réponses, validation"
+        - label: "**Base de données** : Schéma, migrations requises, indexation"
+
+  - type: checkboxes
+    id: testing-scope
+    attributes:
+      label: Spécifications de tests & Qualité
+      options:
+        - label: "**Tests unitaires & intégration** : Fonctions métier et services critiques"
+        - label: "**Tests E2E** : Scénarios utilisateurs complets à automatiser"
+
+  - type: checkboxes
+    id: acceptance-criteria
+    attributes:
+      label: Critères d'acceptation
+      options:
+        - label: "Le flux nominal fonctionne de bout en bout conformément à la spécification"
+        - label: "Les cas d'erreur renvoient les messages et codes HTTP appropriés"
+        - label: "La documentation technique et utilisateur est mise à jour"

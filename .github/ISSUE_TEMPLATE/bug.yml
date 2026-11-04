@@ -1,0 +1,120 @@
+name: "🐛 Rapport de bug / Bug Report"
+description: Signaler un dysfonctionnement, une régression ou un comportement inattendu
+title: "🐛 bug: "
+labels: [ "bug" ]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: "📌 Résumé de l'anomalie"
+      description: Décrivez brièvement ce qui ne fonctionne pas.
+      placeholder: "Une anomalie survient lorsque l'on tente de..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: behavior
+    attributes:
+      label: "🔄 Comportement observé vs Comportement attendu"
+      description: Décrivez ce qui s'est passé concrètement par rapport à ce qui était prévu.
+      value: |
+        - **Comportement observé** : 
+        - **Comportement attendu** :
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: "🪜 Étapes de reproduction"
+      description: Décrivez la suite d'actions précises permettant de reproduire l'anomalie.
+      value: |
+        1. Se rendre sur la page...
+        2. Cliquer sur...
+        3. Renseigner le champ...
+        4. Constater l'erreur...
+    validations:
+      required: true
+
+  - type: input
+    id: incident-timestamp
+    attributes:
+      label: "⏰ Date et heure du constat"
+      description: Permet d'isoler rapidement les logs serveurs et événements système.
+      placeholder: "ex. 07/11/2026 à 14:35 CET"
+    validations:
+      required: false
+
+  - type: input
+    id: app-version
+    attributes:
+      label: "🏷️ Version de l'application (Frontend)"
+      description: Visible généralement dans le footer, les paramètres ou le menu de profil.
+      placeholder: "ex. v2.4.1 ou commit hash affiché"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: "🌍 Environnement d'exécution"
+      options:
+        - Production
+        - Staging / Préproduction
+        - Recette / Test
+        - Local
+    validations:
+      required: true
+
+  - type: input
+    id: context-env
+    attributes:
+      label: "💻 Navigateur et système d'exploitation"
+      placeholder: "ex. Chrome 124 sous macOS, Safari sous iOS 17, Firefox sous Windows..."
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshots-ui
+    attributes:
+      label: "📸 Capture d'écran du problème (Interface)"
+      description: Glissez-déposez ici les images ou vidéos montrant le comportement anormal.
+      placeholder: "Glissez ou collez vos captures d'écran ici..."
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshots-devtools
+    attributes:
+      label: "🔍 Captures DevTools : Console & Onglet Network (F12)"
+      description: "Ouvrez l'inspecteur (touche F12), effectuez une capture de l'onglet 'Console' (erreurs en rouge) et de l'onglet 'Network' / 'Réseau' (requêtes en rouge 4xx/5xx)."
+      placeholder: "Glissez ou collez vos captures de la console et des requêtes réseau ici..."
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        ### 🛠️ Diagnostic technique (Réservé aux développeurs - Optionnel)
+
+  - type: dropdown
+    id: primary-component
+    attributes:
+      label: Composant suspecté
+      options:
+        - Non déterminé
+        - Frontend
+        - Backend
+        - Base de données
+        - Pipeline / CI-CD
+        - Tests E2E
+
+  - type: textarea
+    id: raw-logs
+    attributes:
+      label: Logs bruts & Traces d'erreurs
+      description: Collez ici les stack traces backend ou les payloads réseau JSON.
+      render: text
+    validations:
+      required: false

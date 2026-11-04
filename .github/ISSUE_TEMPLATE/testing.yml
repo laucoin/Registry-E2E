@@ -1,0 +1,51 @@
+name: "🧪 Tests & Assurance Qualité E2E"
+description: Créer, compléter ou fiabiliser des suites de tests automatisés
+title: "🧪 test: "
+labels: [ "testing" ]
+body:
+  - type: textarea
+    id: objective
+    attributes:
+      label: "🎯 Objectif de la couverture"
+      description: Précisez les parcours critiques, cas limites ou régressions à couvrir.
+      placeholder: "Ce ticket met en place la suite de tests E2E pour le tunnel de commande..."
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: test-types
+    attributes:
+      label: "📊 Typologie de tests"
+      options:
+        - label: "**Tests E2E** : Parcours utilisateur complets (Playwright, Cypress...)"
+        - label: "**Tests d'intégration** : Interactions inter-services ou persistance en base"
+        - label: "**Tests unitaires** : Cas limites et règles métier isolées"
+        - label: "**Fiabilisation (Flaky Tests)** : Élimination d'instabilités sur des suites existantes"
+
+  - type: textarea
+    id: scenarios
+    attributes:
+      label: "📝 Scénarios couverts"
+      description: Détaillez les scénarios nominaux et alternatifs à vérifier.
+      value: |
+        1. **Cas nominal** : 
+        2. **Cas d'erreur réseau / timeout** : 
+        3. **Cas de validation métier invalide** :
+    validations:
+      required: true
+
+  - type: textarea
+    id: fixtures-mocks
+    attributes:
+      label: "🗂️ Fixtures, Mocks & Jeux de données"
+      description: Décrivez les comptes de test requis, bouchons d'API ou états initiaux nécessaires.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: ci-integration
+    attributes:
+      label: "⚙️ Intégration CI / CD"
+      options:
+        - label: "Les tests s'exécutent dans le pipeline sans ralentissement disproportionné du build"
+        - label: "Les artefacts (traces, vidéos, captures d'écran) sont sauvegardés en cas d'échec"

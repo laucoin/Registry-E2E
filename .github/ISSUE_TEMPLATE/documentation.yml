@@ -1,0 +1,57 @@
+name: "📚 Documentation"
+description: Rédiger, corriger ou mettre à niveau la documentation technique ou fonctionnelle
+title: "📚 docs: "
+labels: [ "documentation" ]
+body:
+  - type: textarea
+    id: context
+    attributes:
+      label: "🎯 Sujet & Besoin"
+      description: Quel sujet doit être documenté ou clarifié ?
+      placeholder: "La procédure d'installation locale n'est plus à jour suite au changement de dépendance..."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: target-audience
+    attributes:
+      label: "👥 Public cible"
+      options:
+        - Développeurs de l'équipe
+        - Nouveaux arrivants (Onboarding)
+        - Équipe Ops / Déploiement
+        - Utilisateurs finaux / Équipes métier
+    validations:
+      required: true
+
+  - type: textarea
+    id: content-description
+    attributes:
+      label: "📝 Description du contenu attendu"
+      description: Détaillez les sections ou explications à ajouter.
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        ### 🛠️ Cadrage technique (Optionnel)
+
+  - type: checkboxes
+    id: deliverables
+    attributes:
+      label: Livrables techniques concernés
+      options:
+        - label: "**README & Setup** : Procédure d'installation locale, prérequis, variables d'environnement"
+        - label: "**Architecture & Spécifications** : Schémas d'architecture, décisions d'architecture (ADR)"
+        - label: "**Documentation d'API** : Spécifications OpenAPI / Swagger, contrats d'interface"
+        - label: "**Guides opérationnels** : Procédures de déploiement, maintenance ou diagnostic"
+
+  - type: checkboxes
+    id: validation-criteria
+    attributes:
+      label: Critères de validation
+      options:
+        - label: "Les commandes et exemples de code sont testés et fonctionnels"
+        - label: "Tous les liens internes et schémas pointent vers des ressources valides"

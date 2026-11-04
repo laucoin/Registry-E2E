@@ -1,0 +1,48 @@
+name: "🧹 Dette technique & Refactoring"
+description: Améliorer l'architecture, la maintenabilité ou la performance sans altérer la valeur métier
+title: "🧹 refactor: "
+labels: [ "tech-debt" ]
+body:
+  - type: textarea
+    id: current-state
+    attributes:
+      label: "⚠️ État actuel & Limites identifiées"
+      description: Décrivez le composant, le couplage excessif, la lenteur ou la dette ciblée.
+      placeholder: "Le module actuel centralise trop de responsabilités et génère des lenteurs..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: target-solution
+    attributes:
+      label: "🎯 Solution technique cible"
+      description: Architecture visée ou approche de simplification retenue.
+      placeholder: "Le refactoring scinde le service en sous-modules et extrait un hook dédié..."
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: affected-scope
+    attributes:
+      label: "📦 Périmètre technique impacté"
+      options:
+        - label: "**Frontend** : Découpage de composants, simplification de stores ou de hooks"
+        - label: "**Backend** : Isolation de domaines, optimisation de requêtes, suppression de code mort"
+        - label: "**Architecture & Dépendances** : Montée de version de librairies ou du runtime"
+
+  - type: textarea
+    id: risks
+    attributes:
+      label: "⚡ Risques identifiés"
+      description: Risques d'effets de bord sur les fonctionnalités existantes.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: non-regression-strategy
+    attributes:
+      label: "🛡️ Stratégie de non-régression"
+      options:
+        - label: "Les suites de tests existantes passent avec succès avant toute modification"
+        - label: "De nouveaux tests unitaires ou d'intégration verrouillent le comportement"
+        - label: "Aucun contrat public d'API n'est rompu (rétrocompatibilité assurée)"
