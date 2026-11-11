@@ -7,7 +7,12 @@
 		"esModuleInterop": true,
 		"skipLibCheck": true,
 		"types": ["node"],
-		"paths": { "@/*": ["./*"] }
+		"paths": {
+			"@components/*": ["./components/*"],
+			"@fixtures/*": ["./fixtures/*"],
+			"@pages/*": ["./pages/*"],
+			"@support/*": ["./support/*"]
+		}
 	},
-	"include": ["*.ts", "support", ".features-gen"]
+	"include": ["*.ts", "components", "fixtures", "pages", "specs", "support"]
 }

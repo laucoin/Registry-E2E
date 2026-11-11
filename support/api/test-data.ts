@@ -1,10 +1,8 @@
 import { randomUUID } from 'node:crypto';
 
-import type { Account } from '@/support/accounts';
-import { ApiClient } from '@/support/api/client';
-import { DAY_MS, isoDate } from '@/support/dates';
-import type { Scenario } from '@/support/fixtures';
-import { ROLE_ACCOUNTS } from '@/support/permissions';
+import type { Account } from '@support/accounts';
+import { ApiClient } from '@support/api/client';
+import { DAY_MS, isoDate } from '@support/dates';
 
 export type ProjectOption = 'VEHICLE' | 'ACTIVITY' | 'COMMUNICATION' | 'ALERT';
 export type ProjectRole = 'PROJECT_ADMINISTRATOR' | 'PROJECT_COORDINATOR' | 'PROJECT_PARTICIPANT';
@@ -21,11 +19,11 @@ export interface Created {
 	id: string;
 }
 
-const unique = (prefix: string) => `${prefix} ${randomUUID().slice(0, 8)}`;
+const unique = (prefix: string): string => `${prefix} ${randomUUID().slice(0, 8)}`;
 
 /**
  * Crée via l'API les données dont un scénario a besoin, avec le compte donné, et supprime les projets qu'il a
- * créés une fois le scénario terminé (supprimer un projet supprime tout ce qu'il contient).
+ * créés une fois le test terminé (supprimer un projet supprime tout ce qu'il contient).
  */
 export class TestData {
 	private readonly _projects: string[] = [];
@@ -64,12 +62,12 @@ export class TestData {
 	}
 
 	/** Enregistre quelque chose à annuler une fois le scénario terminé, p. ex. débloquer un compte de départ qu'un step a bloqué. */
-	public onCleanup(undo: () => Promise<unknown>) {
+	public onCleanup(undo: () => Promise<unknown>): void {
 		this._cleanups.push(undo);
 	}
 
 	/** Enregistre un projet créé via l'UI pour qu'il soit supprimé avec les autres, par le compte qui l'a créé (il en est l'administrateur). */
-	public track(projectId: string, owner: Account = 'administrator') {
+	public track(projectId: string, owner: Account = 'administrator'): void {
 		if (owner === 'administrator') this._projects.push(projectId);
 		else this._cleanups.push(async () => (await this.apiAs(owner)).raw('DELETE', `/projects/${projectId}`));
 	}
@@ -90,38 +88,6 @@ export class TestData {
 		const other = await TestData.as(account);
 		this._others.push(other);
 		return other.project(options);
-	}
-
-	/**
-	 * Le projet que la feature appelle `name` : celui que ce scénario a créé sous cet alias, sinon un nouveau projet
-	 * vide est créé sous ce nom. Passer `seeded` pour les steps en lecture seule qui s'appuient sur les données de départ.
-	 */
-	public async projectNamed(scenario: Scenario, name: string, seeded = false): Promise<Project> {
-		let project = scenario.projects.get(name);
-		if (!project) {
-			project = seeded ? await this._seededProject(name) : await this._scenarioProject(scenario);
-			scenario.projects.set(name, project);
-		}
-		scenario.current = project;
-		return project;
-	}
-
-	private async _seededProject(name: string): Promise<Project> {
-		const list = await this.api.send<{ content: { id: string; name: string }[] }>(
-			'GET',
-			`/projects?q=${encodeURIComponent(name)}&size=50`,
-		);
-		const found = list.content.find((candidate) => candidate.name === name);
-		if (!found) throw new Error(`Seeded project "${name}" not found`);
-		return { id: found.id, name };
-	}
-
-	private async _scenarioProject(scenario: Scenario): Promise<Project> {
-		const project = await this.project();
-		// Le projet appartient à l'administrateur : un scénario `@all-roles` donne son rôle au compte connecté pour qu'il y ait un profil.
-		if (scenario.role && scenario.role !== 'PROJECT_ADMINISTRATOR')
-			await this.invite(project.id, ROLE_ACCOUNTS[scenario.role], scenario.role);
-		return project;
 	}
 
 	/**
@@ -209,34 +175,6 @@ export class TestData {
 		return participant;
 	}
 
-	/** Un participant dans chaque statut de présence que la page de suivi peut afficher. */
-	public async presenceMix(projectId: string): Promise<Record<'IN' | 'OUT' | 'OVERDUE' | 'UNAVAILABLE', Created>> {
-		const hour = 3_600_000;
-		const entered = await this.participant(projectId);
-		await this.participantMovement(projectId, {
-			type: 'IN',
-			participantIds: [entered.id],
-			dateTime: new Date(Date.now() - 2 * hour).toISOString(),
-		});
-		const left = await this.participant(projectId);
-		await this.participantMovement(projectId, {
-			type: 'IN',
-			participantIds: [left.id],
-			dateTime: new Date(Date.now() - 3 * hour).toISOString(),
-		});
-		await this.participantMovement(projectId, {
-			type: 'OUT',
-			participantIds: [left.id],
-			reason: 'SHOPPING',
-			dateTime: new Date(Date.now() - hour).toISOString(),
-		});
-		const overdue = await this.overdueParticipant(projectId);
-		const unavailable = await this.participant(projectId, {
-			startAvailability: { date: isoDate(2), time: '12:00:00+00:00' },
-		});
-		return { IN: entered, OUT: left, OVERDUE: overdue, UNAVAILABLE: unavailable };
-	}
-
 	/** Un mouvement de participants enregistrés. OUT demande un motif ou une activité ; IN ne doit avoir ni l'un ni l'autre. */
 	public participantMovement(
 		projectId: string,
@@ -279,12 +217,14 @@ export class TestData {
 
 	public async cleanup(): Promise<void> {
 		for (const undo of this._cleanups.splice(0).reverse()) await undo().catch(() => undefined);
-		for (const id of this._projects.splice(0)) {
-			await this.api.raw('DELETE', `/projects/${id}`);
-		}
+		for (const id of this._projects.splice(0)) await this.api.raw('DELETE', `/projects/${id}`);
+		await this._disposeClients();
+		for (const other of this._others.splice(0)) await other.cleanup();
+	}
+
+	private async _disposeClients(): Promise<void> {
 		await this.api.dispose();
 		for (const client of this._clients.values()) await client.dispose();
 		this._clients.clear();
-		for (const other of this._others.splice(0)) await other.cleanup();
 	}
 }

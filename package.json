@@ -3,11 +3,9 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"bddgen": "bddgen",
-		"test": "bddgen --tags \"not @wip\" && rm -rf blob-report && (PW_BLOB=1 PLAYWRIGHT_BLOB_OUTPUT_FILE_NAME=parallel.zip playwright test --project=parallel --project=role-coordinator --project=role-participant --project=matrix --pass-with-no-tests; a=$?; PW_BLOB=1 PLAYWRIGHT_BLOB_OUTPUT_FILE_NAME=exclusive.zip playwright test --project=exclusive --pass-with-no-tests; b=$?; playwright merge-reports --reporter=html ./blob-report; exit $((a || b)))",
-		"test:smoke": "bddgen --tags \"@smoke and not @wip\" && rm -rf blob-report && (PW_BLOB=1 PLAYWRIGHT_BLOB_OUTPUT_FILE_NAME=parallel.zip playwright test --project=parallel --project=role-coordinator --project=role-participant --project=matrix --pass-with-no-tests; a=$?; PW_BLOB=1 PLAYWRIGHT_BLOB_OUTPUT_FILE_NAME=exclusive.zip playwright test --project=exclusive --pass-with-no-tests; b=$?; playwright merge-reports --reporter=html ./blob-report; exit $((a || b)))",
-		"test:feature": "bddgen --tags \"not @wip\" && playwright test",
-		"test:ui": "bddgen --tags \"not @wip\" && playwright test --ui",
+		"test": "rm -rf blob-report && (PW_BLOB=1 PLAYWRIGHT_BLOB_OUTPUT_FILE_NAME=parallel.zip playwright test --project=parallel --pass-with-no-tests; a=$?; PW_BLOB=1 PLAYWRIGHT_BLOB_OUTPUT_FILE_NAME=exclusive.zip playwright test --project=exclusive --pass-with-no-tests; b=$?; playwright merge-reports --reporter=html ./blob-report; exit $((a || b)))",
+		"test:smoke": "rm -rf blob-report && (PW_BLOB=1 PLAYWRIGHT_BLOB_OUTPUT_FILE_NAME=parallel.zip playwright test --project=parallel --grep @smoke --pass-with-no-tests; a=$?; PW_BLOB=1 PLAYWRIGHT_BLOB_OUTPUT_FILE_NAME=exclusive.zip playwright test --project=exclusive --grep @smoke --pass-with-no-tests; b=$?; playwright merge-reports --reporter=html ./blob-report; exit $((a || b)))",
+		"test:ui": "playwright test --ui",
 		"report": "playwright show-report",
 		"typecheck": "tsc --noEmit",
 		"lint": "eslint .",
@@ -24,7 +22,6 @@
 		"eslint-plugin-playwright": "^2.12.2",
 		"eslint-plugin-prettier": "^5.5.7",
 		"eslint-plugin-simple-import-sort": "^14.0.0",
-		"playwright-bdd": "^9.2.1",
 		"prettier": "^3.9.10",
 		"typescript": "^6.0.3",
 		"typescript-eslint": "^8.72.1"

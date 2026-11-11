@@ -4,5 +4,4 @@ package-lock.json
 blob-report
 playwright-report
 test-results
-.features-gen
 .auth

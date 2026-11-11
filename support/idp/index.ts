@@ -1,6 +1,6 @@
-import { authentik } from '@/support/idp/authentik';
-import { keycloak } from '@/support/idp/keycloak';
-import type { IdpAdapter } from '@/support/idp/types';
+import { authentik } from '@support/idp/authentik';
+import { keycloak } from '@support/idp/keycloak';
+import type { IdpAdapter } from '@support/idp/types';
 
 const ADAPTERS: Record<string, IdpAdapter> = { authentik, keycloak };
 

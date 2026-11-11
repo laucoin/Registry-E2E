@@ -1,4 +1,4 @@
-import type { IdpAdapter } from '@/support/idp/types';
+import type { IdpAdapter } from '@support/idp/types';
 
 // Thème de connexion Keycloak par défaut : un seul formulaire avec identifiant et mot de passe.
 export const keycloak: IdpAdapter = {

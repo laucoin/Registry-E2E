@@ -1,6 +1,6 @@
 import { type APIRequestContext, type APIResponse, request } from '@playwright/test';
 
-import { type Account, authFile } from '@/support/accounts';
+import { type Account, authFile } from '@support/accounts';
 
 const API_PREFIX = '/api/v2';
 const CSRF_HEADER = 'X-XSRF-TOKEN';
@@ -52,7 +52,7 @@ export class ApiClient {
 		return this._csrfToken;
 	}
 
-	public dispose() {
+	public dispose(): Promise<void> {
 		return this._context.dispose();
 	}
 }

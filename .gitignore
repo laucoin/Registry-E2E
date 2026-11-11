@@ -33,7 +33,6 @@ yarn-error.log
 # Miscellaneous
 .env
 .auth/
-.features-gen/
 playwright-report/
 test-results/
 REVIEW-STATUS.md

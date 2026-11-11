@@ -1,9 +1,9 @@
 import type { Page } from '@playwright/test';
 
-import type { Account } from '@/support/accounts';
-import { password } from '@/support/accounts';
-import { idp } from '@/support/idp';
-import { withRetries } from '@/support/retry';
+import type { Account } from '@support/accounts';
+import { password } from '@support/accounts';
+import { idp } from '@support/idp';
+import { withRetries } from '@support/retry';
 
 const ATTEMPTS = 3;
 const RETRY_PAUSE_MS = 6_000;

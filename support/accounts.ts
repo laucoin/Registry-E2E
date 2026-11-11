@@ -6,5 +6,5 @@ export const BLOCKED_ACCOUNTS = ['blocked-user'] as const;
 
 export type Account = (typeof ACCOUNTS)[number] | (typeof BLOCKED_ACCOUNTS)[number];
 
-export const password = () => process.env.AU_PASS ?? 'dev123';
-export const authFile = (account: Account) => `.auth/${account}.json`;
+export const password = (): string => process.env.AU_PASS ?? 'dev123';
+export const authFile = (account: Account): string => `.auth/${account}.json`;

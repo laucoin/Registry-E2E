@@ -1,5 +1,5 @@
-import type { Account } from '@/support/accounts';
-import type { ApiClient } from '@/support/api/client';
+import type { Account } from '@support/accounts';
+import type { ApiClient } from '@support/api/client';
 
 /** Les trois rôles de projet, et le compte de départ qui les détient dans les projets de départ et ceux que `TestData` prépare. */
 export const PROJECT_ROLES = ['PROJECT_ADMINISTRATOR', 'PROJECT_COORDINATOR', 'PROJECT_PARTICIPANT'] as const;
@@ -58,7 +58,7 @@ export class Permissions {
 	}
 }
 
-const words = (text: string) => text.trim().split(/\s+/).sort();
+const words = (text: string): string[] => text.trim().split(/\s+/).sort();
 
 /**
  * Ce que le backend accorde à chaque rôle de projet (migrations `V1_*`, relues avec `docs/functional/roles-and-permissions.md`). Un écart avec les

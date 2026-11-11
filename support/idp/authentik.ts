@@ -1,4 +1,4 @@
-import type { IdpAdapter } from '@/support/idp/types';
+import type { IdpAdapter } from '@support/idp/types';
 
 // Authentik utilise un flux en plusieurs étapes : identification d'abord, puis mot de passe.
 export const authentik: IdpAdapter = {

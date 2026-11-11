@@ -8,7 +8,6 @@ export default tseslint.config(
 	{
 		ignores: [
 			'node_modules/**',
-			'.features-gen/**',
 			'blob-report/**',
 			'playwright-report/**',
 			'test-results/**',
@@ -33,7 +32,7 @@ export default tseslint.config(
 					groups: [
 						['^@playwright/test'], // 1. Runner Playwright
 						['^@?\\w'], // 2. Librairies tierces
-						['^@/'], // 3. Alias absolus (Page Objects, fixtures, helpers)
+						['^@(components|fixtures|pages|support)/'], // 3. Alias internes (Page Objects, composants, fixtures, outillage)
 					],
 				},
 			],
@@ -46,11 +45,13 @@ export default tseslint.config(
 					patterns: [
 						{
 							group: ['../*'],
-							message: 'Relative parent imports are prohibited. Use an alias (e.g., @/).',
+							message:
+								'Relative parent imports are prohibited. Use an alias (@pages/, @components/, @fixtures/, @support/).',
 						},
 						{
 							group: ['./*'],
-							message: 'Relative current directory imports are prohibited. Use an alias (e.g., @/).',
+							message:
+								'Relative current directory imports are prohibited. Use an alias (@pages/, @components/, @fixtures/, @support/).',
 						},
 					],
 				},
@@ -80,11 +81,11 @@ export default tseslint.config(
 
 			// Métriques de complexité
 			'max-depth': ['error', 2],
-			complexity: ['error', { max: 6 }],
+			complexity: ['error', { max: 4 }],
+			'max-lines-per-function': ['error', { max: 25, skipBlankLines: true, skipComments: true }],
+			'@typescript-eslint/explicit-function-return-type': ['error', { allowExpressions: true }],
 			'@typescript-eslint/max-params': ['error', { max: 7 }],
-			// `scenario` est l'état partagé des steps BDD
-			'no-param-reassign': ['error', { props: true, ignorePropertyModificationsFor: ['scenario'] }],
-			// Les paramètres `_x` sont des captures de step imposées par la phrase Gherkin
+			'no-param-reassign': ['error', { props: true }],
 			'@typescript-eslint/no-unused-vars': [
 				'error',
 				{ argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' },
@@ -111,11 +112,15 @@ export default tseslint.config(
 			'max-lines-per-function': [
 				'error',
 				{
-					max: 35, // Légèrement rehaussé pour accommoder les scénarios de test complets
+					max: 70, // Un scénario complet (Arrange, Act, Assert en test.step) reste lisible jusqu'à 70 lignes
 					skipBlankLines: true,
 					skipComments: true,
 				},
 			],
+			// Une spec trop longue se découpe en fichiers thématiques
+			'max-lines': ['error', { max: 150, skipBlankLines: true, skipComments: true }],
+			// Une spec est linéaire : aucune branche ni boucle
+			complexity: ['error', { max: 1 }],
 			// On n'impose pas de type de retour explicite sur les lambdas de test()
 			'@typescript-eslint/explicit-function-return-type': 'off',
 		},
