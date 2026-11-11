@@ -13,6 +13,8 @@ export class RegisteredMovementFormPage {
 	public readonly information: MovementInformationStep;
 	public readonly reason: MovementReason;
 	public readonly previous: Locator;
+	/** Le titre dit s'il s'agit d'une entrée ou d'une sortie (« Créer une sortie »). */
+	public readonly title: Locator;
 	public readonly participants: ElementPicker;
 	private readonly _submit: Locator;
 	private readonly _submission: FormSubmission;
@@ -21,6 +23,7 @@ export class RegisteredMovementFormPage {
 		this.information = new MovementInformationStep(_page);
 		this.reason = new MovementReason(_page.getByTestId('registered-movement-form-content-form'));
 		this.previous = _page.getByTestId('registered-movement-form-content-previous-button');
+		this.title = _page.getByTestId('form-title');
 		this.participants = new ElementPicker(_page.getByTestId('registered-participants-fields-participants-field'));
 		this._submit = _page.getByTestId('registered-movement-form-content-next-submit');
 		this._submission = new FormSubmission(_page);
