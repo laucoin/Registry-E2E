@@ -61,10 +61,10 @@ export class Permissions {
 const words = (text: string): string[] => text.trim().split(/\s+/).sort();
 
 /**
- * Ce que le backend accorde à chaque rôle de projet (migrations `V1_*`, relues avec `docs/functional/roles-and-permissions.md`). Un écart avec les
- * authorities réelles fait échouer `tests/permission-matrix.spec.ts` : il signale soit une permission changée sans mise à jour de la doc, soit l'inverse.
+ * Ce que le backend accorde à chaque rôle de projet dont toutes les options sont activées (migrations `V1_*` ; les `OPTION_*` suivent les
+ * options du projet). Un écart avec les authorities réelles fait échouer SEC-01 (`specs/security/permissions.spec.ts`).
  *
- * Écart connu entre la doc et le backend : la doc donne « R » sur les activités au participant, le backend ne lui accorde aucune permission ACTIVITY_*.
+ * Écart connu avec le référentiel : il donne la lecture des activités au participant, le backend ne lui accorde aucune permission ACTIVITY_*.
  */
 const READ_ONLY_TEAM = `
   ALERT_C ALERT_COMMUNICATION_R ALERT_R ALERT_SOFT_DELETE ALERT_U
