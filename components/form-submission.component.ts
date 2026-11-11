@@ -1,5 +1,7 @@
 import type { Locator, Page } from '@playwright/test';
 
+import { Toasts } from '@components/toasts.component';
+
 /**
  * Objectif: Soumettre un formulaire et en attendre l'issue | Périmètre: tout formulaire qui affiche ses erreurs dans
  * `app-form-error` | Limites: pas les dialogs de confirmation, qui ont leur propre zone d'erreur.
@@ -14,8 +16,7 @@ export class FormSubmission {
 
 	constructor(page: Page) {
 		this._formError = page.getByTestId('form-error-callout');
-		// Les toasts sont créés par le web component `sgdf-toast`, sans data-test-id ni rôle : seule sa variante les distingue.
-		this._toastError = page.locator('sgdf-toast-item[variant="danger"]');
+		this._toastError = new Toasts(page).error;
 	}
 
 	/** Clique sur le bouton d'envoi, puis attend qu'il disparaisse (étape suivante ou page d'origine) ou qu'une erreur s'affiche. */
