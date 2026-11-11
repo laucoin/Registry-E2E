@@ -2,6 +2,7 @@ import { test as base } from '@playwright/test';
 
 import { ActivityFormPage } from '@pages/activity-form.page';
 import { AlertsListPage } from '@pages/alerts-list.page';
+import { ConfigurationPage } from '@pages/configuration.page';
 import { ConfigurationListPage } from '@pages/configuration-list.page';
 import { GlobalErrorPage } from '@pages/global-error.page';
 import { GroupFormPage } from '@pages/group-form.page';
@@ -24,6 +25,7 @@ interface Fixtures {
 	activityForm: ActivityFormPage;
 	alertsList: AlertsListPage;
 	/** Prépare les données par l'API ; les projets créés ou suivis (`track`) sont supprimés à la fin du test, ce qui rend chaque test rejouable. */
+	configuration: ConfigurationPage;
 	data: TestData;
 	globalError: GlobalErrorPage;
 	groupForm: GroupFormPage;
@@ -49,6 +51,7 @@ export const test = base.extend<Fixtures>({
 	activitiesList: async ({ page }, use) => use(new ConfigurationListPage(page, 'activities')),
 	activityForm: async ({ page }, use) => use(new ActivityFormPage(page)),
 	alertsList: async ({ page }, use) => use(new AlertsListPage(page)),
+	configuration: async ({ page }, use) => use(new ConfigurationPage(page)),
 	data: async ({}, use) => {
 		const data = await TestData.as('administrator');
 		try {
