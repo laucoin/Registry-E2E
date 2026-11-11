@@ -57,6 +57,11 @@ export class TestData {
 		return page.content.find((project) => project.name === name)?.id;
 	}
 
+	/** L'utilisateur d'un compte de départ, tel que le backend le connaît. */
+	public async userOf(account: Account): Promise<{ email: string; firstName: string; lastName: string }> {
+		return (await this.apiAs(account)).send('GET', '/authentication/user/current');
+	}
+
 	/** Un client d'API d'un autre compte, conservé jusqu'à la fin du scénario pour que ses réponses restent lisibles. */
 	public async apiAs(account: Account): Promise<ApiClient> {
 		let client = this._clients.get(account);

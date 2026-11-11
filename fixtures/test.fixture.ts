@@ -7,6 +7,8 @@ import { GroupFormPage } from '@pages/group-form.page';
 import { GuestMovementFormPage } from '@pages/guest-movement-form.page';
 import { MovementsListPage } from '@pages/movements-list.page';
 import { ParticipantFormPage } from '@pages/participant-form.page';
+import { ProfileInvitationFormPage } from '@pages/profile-invitation-form.page';
+import { ProfilesListPage } from '@pages/profiles-list.page';
 import { ProjectFormPage } from '@pages/project-form.page';
 import { ProjectHomePage } from '@pages/project-home.page';
 import { ProjectsListPage } from '@pages/projects-list.page';
@@ -26,6 +28,8 @@ interface Fixtures {
 	movementsList: MovementsListPage;
 	participantForm: ParticipantFormPage;
 	participantsList: ConfigurationListPage;
+	profileInvitationForm: ProfileInvitationFormPage;
+	profilesList: ProfilesListPage;
 	projectForm: ProjectFormPage;
 	projectHome: ProjectHomePage;
 	projectsList: ProjectsListPage;
@@ -53,6 +57,8 @@ export const test = base.extend<Fixtures>({
 	movementsList: async ({ page }, use) => use(new MovementsListPage(page)),
 	participantForm: async ({ page }, use) => use(new ParticipantFormPage(page)),
 	participantsList: async ({ page }, use) => use(new ConfigurationListPage(page, 'participants')),
+	profileInvitationForm: async ({ page }, use) => use(new ProfileInvitationFormPage(page)),
+	profilesList: async ({ page }, use) => use(new ProfilesListPage(page)),
 	projectForm: async ({ page }, use) => use(new ProjectFormPage(page)),
 	projectHome: async ({ page }, use) => use(new ProjectHomePage(page)),
 	projectsList: async ({ page }, use) => use(new ProjectsListPage(page)),
