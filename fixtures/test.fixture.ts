@@ -5,6 +5,7 @@ import { AlertsListPage } from '@pages/alerts-list.page';
 import { ConfigurationListPage } from '@pages/configuration-list.page';
 import { GlobalErrorPage } from '@pages/global-error.page';
 import { GroupFormPage } from '@pages/group-form.page';
+import { GroupMembersPage } from '@pages/group-members.page';
 import { GuestMovementFormPage } from '@pages/guest-movement-form.page';
 import { MovementsListPage } from '@pages/movements-list.page';
 import { ParticipantFormPage } from '@pages/participant-form.page';
@@ -26,6 +27,7 @@ interface Fixtures {
 	data: TestData;
 	globalError: GlobalErrorPage;
 	groupForm: GroupFormPage;
+	groupMembers: GroupMembersPage;
 	groupsList: ConfigurationListPage;
 	guestMovementForm: GuestMovementFormPage;
 	movementsList: MovementsListPage;
@@ -57,6 +59,7 @@ export const test = base.extend<Fixtures>({
 	},
 	globalError: async ({ page }, use) => use(new GlobalErrorPage(page)),
 	groupForm: async ({ page }, use) => use(new GroupFormPage(page)),
+	groupMembers: async ({ page }, use) => use(new GroupMembersPage(page)),
 	groupsList: async ({ page }, use) => use(new ConfigurationListPage(page, 'groups')),
 	guestMovementForm: async ({ page }, use) => use(new GuestMovementFormPage(page)),
 	movementsList: async ({ page }, use) => use(new MovementsListPage(page)),

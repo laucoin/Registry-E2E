@@ -8,6 +8,8 @@ export type RowAction =
 	| 'hardDelete'
 	| 'movements-history'
 	| 'members'
+	| 'remove-member'
+	| 'export'
 	| 'resolve'
 	| 'cancel'
 	| 'reopen';

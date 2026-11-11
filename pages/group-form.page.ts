@@ -7,7 +7,9 @@ import { FormSubmission } from '@components/form-submission.component';
 export class GroupFormPage {
 	public readonly name: Locator;
 	private readonly _save: Locator;
-	private readonly _members: ElementPicker;
+	public readonly members: ElementPicker;
+	/** Le message du champ des membres quand la recherche ne trouve personne. */
+	public readonly nobodyFound: Locator;
 	private readonly _addMembers: Locator;
 	private readonly _skipMembers: Locator;
 	private readonly _submission: FormSubmission;
@@ -15,21 +17,27 @@ export class GroupFormPage {
 	constructor(private readonly _page: Page) {
 		this.name = _page.getByTestId('group-form-name-input').getByRole('textbox');
 		this._save = _page.getByTestId('group-form-actions').getByTestId('form-actions-submit');
-		this._members = new ElementPicker(_page.getByTestId('group-form-members-field'));
+		const members = _page.getByTestId('group-form-members-field');
+		this.members = new ElementPicker(members);
+		this.nobodyFound = members.getByText('Aucune personne trouvée');
 		this._addMembers = _page.getByTestId('group-form-members-submit-button');
 		this._skipMembers = _page.getByTestId('group-form-members-skip-button');
 		this._submission = new FormSubmission(_page);
 	}
 
 	public async create(projectId: string, name: string, members: string[]): Promise<void> {
-		await this._page.goto(`/projects/${projectId}/configuration/groups/create`);
+		await this.openCreation(projectId);
 		await this.createOpened(name, members);
+	}
+
+	public async openCreation(projectId: string): Promise<void> {
+		await this._page.goto(`/projects/${projectId}/configuration/groups/create`);
 	}
 
 	/** Le groupe est créé à la première étape ; la seconde lui ajoute les membres, ou est passée quand il n'en a pas. */
 	public async createOpened(name: string, members: string[]): Promise<void> {
 		await this.save(name);
-		for (const member of members) await this._members.choose(member);
+		for (const member of members) await this.members.choose(member);
 		if (members.length) await this._submission.submit(this._addMembers);
 		else await this._submission.submit(this._skipMembers);
 	}

@@ -46,6 +46,11 @@ export class ConfigurationListPage {
 		return new ElementRow(this.rows.filter({ hasText: text }));
 	}
 
+	/** L'action principale d'une ligne, affichée à côté du menu (p. ex. les membres d'un groupe). */
+	public primaryAction(text: string): Locator {
+		return this.row(text).root.getByTestId('element-primary-action-button');
+	}
+
 	/** Le tag « supprimé » d'une ligne. */
 	public hiddenTag(text: string): Locator {
 		return this.row(text).root.getByTestId(`${SECTIONS[this._section]}-row-hidden-tag`);
