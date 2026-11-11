@@ -42,6 +42,11 @@ export class ApiClient {
 		return this._context.fetch(`${API_PREFIX}${path}`, { method, data, headers });
 	}
 
+	/** Envoie la requête sans jeton CSRF, pour vérifier que le backend la refuse. */
+	public withoutCsrf(method: Method, path: string, data?: unknown): Promise<APIResponse> {
+		return this._context.fetch(`${API_PREFIX}${path}`, { method, data });
+	}
+
 	/** Le backend dérive un jeton CSRF sans état du jeton d'accès et le renvoie à chaque réponse. */
 	private async _token(): Promise<string> {
 		if (!this._csrfToken) {

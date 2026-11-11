@@ -31,3 +31,9 @@ export const uiDateIn = (offsetDays: number): string => uiDate(new Date(Date.now
 
 /** La date et l'heure, au format de l'API, de dans `hours` heures. */
 export const hoursFromNow = (hours: number): ApiDateTime => hoursAgo(-hours);
+
+/** L'instant ISO d'il y a `hours` heures, pour dater un mouvement. */
+export const isoHoursAgo = (hours: number): string => new Date(Date.now() - hours * HOUR_MS).toISOString();
+
+/** L'instant d'une date de l'API en millisecondes, pour comparer deux écritures du même instant ; `null` si elle est absente. */
+export const epochOf = (value: string | null | undefined): number | null => (value ? new Date(value).getTime() : null);

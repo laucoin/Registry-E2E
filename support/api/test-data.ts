@@ -1,3 +1,5 @@
+import type { APIResponse } from '@playwright/test';
+
 import { randomUUID } from 'node:crypto';
 
 import type { Account } from '@support/accounts';
@@ -10,6 +12,30 @@ export type MovementType = 'IN' | 'OUT';
 /** Motifs que le backend accepte : les invités entrent (IN) pour ceux-ci, les participants enregistrés sortent (OUT) pour les autres. */
 export type GuestReason = 'EMERGENCY' | 'LOGISTICS' | 'PARTNER_ANIMATION' | 'VISIT';
 export type RegisteredReason = 'SHOPPING' | 'MEDICAL' | 'DEFINITIVE_DEPARTURE' | 'OTHER';
+
+export interface ParticipantMovement {
+	type: MovementType;
+	participantIds: string[];
+	reason?: RegisteredReason;
+	activityId?: string;
+	dateTime?: string;
+	vehicleId?: string;
+}
+
+export interface ParticipantState {
+	effectiveArrival: string | null;
+	effectiveDeparture: string | null;
+}
+
+/** Le corps d'un mouvement d'inscrits : un contenu par participant, avec le véhicule éventuel. */
+function movementBody(movement: ParticipantMovement): Record<string, unknown> {
+	const { participantIds, dateTime, vehicleId, ...rest } = movement;
+	return {
+		dateTime: dateTime ?? new Date().toISOString(),
+		content: participantIds.map((participantId) => ({ participantId, vehicleId })),
+		...rest,
+	};
+}
 
 export interface Project {
 	id: string;
@@ -187,23 +213,28 @@ export class TestData {
 	}
 
 	/** Un mouvement de participants enregistrés. OUT demande un motif ou une activité ; IN ne doit avoir ni l'un ni l'autre. */
-	public participantMovement(
-		projectId: string,
-		movement: {
-			type: MovementType;
-			participantIds: string[];
-			reason?: RegisteredReason;
-			activityId?: string;
-			dateTime?: string;
-			vehicleId?: string;
-		},
-	): Promise<Created> {
-		const { participantIds, dateTime, vehicleId, ...rest } = movement;
-		return this.api.send('POST', `/projects/${projectId}/movements`, {
-			dateTime: dateTime ?? new Date().toISOString(),
-			content: participantIds.map((participantId) => ({ participantId, vehicleId })),
-			...rest,
-		});
+	public participantMovement(projectId: string, movement: ParticipantMovement): Promise<Created> {
+		return this.api.send('POST', `/projects/${projectId}/movements`, movementBody(movement));
+	}
+
+	/** Le même mouvement, dont la réponse est renvoyée telle quelle pour les scénarios qui attendent un refus. */
+	public tryParticipantMovement(projectId: string, movement: ParticipantMovement): Promise<APIResponse> {
+		return this.api.raw('POST', `/projects/${projectId}/movements`, movementBody(movement));
+	}
+
+	/** Le participant tel que le backend le décrit, avec ses dates effectives d'arrivée et de départ. */
+	public participantOf(projectId: string, participantId: string): Promise<ParticipantState> {
+		return this.api.send('GET', `/projects/${projectId}/participants/${participantId}`);
+	}
+
+	/** Les participants que le formulaire de mouvement propose par défaut à cet instant : ceux qui y sont disponibles. */
+	public async availableParticipantIds(projectId: string, at: string): Promise<string[]> {
+		const query = `contentType=REGISTERED&at=${encodeURIComponent(at)}&all=false`;
+		const found = await this.api.send<{ participants: Created[] }>(
+			'GET',
+			`/projects/${projectId}/movements/search/participants-and-groups?${query}`,
+		);
+		return found.participants.map((participant) => participant.id);
 	}
 
 	/** Un mouvement d'invités. IN demande un motif ; OUT n'en a aucun. */
