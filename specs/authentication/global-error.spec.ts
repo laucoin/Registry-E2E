@@ -4,12 +4,11 @@ import { expect, test } from '@fixtures/test.fixture';
 test.describe('Global error', () => {
 	test('ERR-01 · a failure to load the current user shows the backend message, and retrying reloads the app', async ({
 		globalError,
-		page,
 		session,
 	}) => {
 		await test.step('The error page shows the title and the detail sent by the backend', async () => {
 			await globalError.failNextUserLoad(500, { title: 'Base indisponible', detail: 'Maintenance en cours' });
-			await page.goto('/');
+			await session.visit('/');
 			await expect(globalError.callout).toHaveJSProperty('title', 'Base indisponible');
 			await expect(globalError.callout).toContainText('Maintenance en cours');
 		});

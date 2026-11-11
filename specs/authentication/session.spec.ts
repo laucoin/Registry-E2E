@@ -13,7 +13,7 @@ test.describe('Session', { tag: '@exclusive' }, () => {
 		session,
 	}) => {
 		await test.step('A protected page asks to sign in', async () => {
-			await page.goto('/my-account/invitations');
+			await session.visit('/my-account/invitations');
 			await expect(page).toHaveURL(/\/login/);
 		});
 
@@ -26,14 +26,14 @@ test.describe('Session', { tag: '@exclusive' }, () => {
 
 	test('AUTH-02 · signing out makes the protected pages unreachable', async ({ page, session }) => {
 		await test.step('Sign in then sign out', async () => {
-			await page.goto('/login');
+			await session.visit('/login');
 			await session.signIn('participant');
 			await expect(session.accountMenu).toBeVisible();
 			await session.signOut();
 		});
 
 		await test.step('A protected page asks to sign in again', async () => {
-			await page.goto('/my-account/invitations');
+			await session.visit('/my-account/invitations');
 			await expect(page).toHaveURL(/\/login/);
 		});
 	});

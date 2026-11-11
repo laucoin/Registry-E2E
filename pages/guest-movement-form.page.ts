@@ -15,6 +15,8 @@ export class GuestMovementFormPage {
 	public readonly reason: MovementReason;
 	/** Les invités qui sortent, choisis parmi ceux présents. */
 	public readonly leavingGuests: ElementPicker;
+	/** Le message du champ des invités qui sortent quand la recherche ne trouve personne. */
+	public readonly noLeavingGuestFound: Locator;
 	private readonly _guest: Locator;
 	private readonly _submit: Locator;
 	private readonly _submission: FormSubmission;
@@ -23,7 +25,9 @@ export class GuestMovementFormPage {
 		this.information = new MovementInformationStep(_page);
 		const content = _page.getByTestId('guest-movement-form-content-form');
 		this.reason = new MovementReason(content);
-		this.leavingGuests = new ElementPicker(_page.getByTestId('guest-movement-form-participants-field'));
+		const leaving = _page.getByTestId('guest-movement-form-participants-field');
+		this.leavingGuests = new ElementPicker(leaving);
+		this.noLeavingGuestFound = leaving.getByText('Aucune personne ou groupe trouvé');
 		this._guest = content.getByTestId('guest-list-fields-guest-item').first();
 		this._submit = _page.getByTestId('guest-movement-form-content-submit');
 		this._submission = new FormSubmission(_page);
@@ -49,7 +53,7 @@ export class GuestMovementFormPage {
 	}
 
 	/** Envoie un formulaire que la validation du frontend doit retenir : le formulaire reste ouvert. */
-	public async saveRejected(): Promise<void> {
+	public async submitRejected(): Promise<void> {
 		await this._submit.click();
 	}
 

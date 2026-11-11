@@ -1,6 +1,7 @@
 import { expect, test } from '@fixtures/test.fixture';
 import { uid } from '@support/unique';
 
+/** Objectif: Couvrir le parcours critique d'un séjour | Périmètre: projet, participant, groupe, première entrée, accueil et liste des E/S | Limites: sans option */
 test.describe('Critical path of a stay', { tag: '@smoke' }, () => {
 	test('CRIT-01 · from an empty project to the first entry of a registered participant', async ({
 		data,

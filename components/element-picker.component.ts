@@ -12,14 +12,11 @@ export class ElementPicker {
 	private readonly _search: Locator;
 	/** Les éléments déjà choisis, affichés sous le champ. */
 	public readonly chosen: Locator;
-	/** Le message affiché quand la recherche ne trouve rien. */
-	public readonly noResult: Locator;
 
 	constructor(private readonly _root: Locator) {
 		this._combobox = _root.getByRole('combobox');
 		this._search = _root.getByRole('searchbox');
 		this.chosen = _root.getByTestId('select-elements-field-row');
-		this.noResult = _root.getByText('Aucune personne ou groupe trouvé');
 	}
 
 	public async choose(name: string): Promise<void> {

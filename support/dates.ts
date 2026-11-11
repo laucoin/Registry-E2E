@@ -28,3 +28,6 @@ export function uiDate(date: Date): string {
 
 /** La date du jour décalé de `offsetDays` jours, au format de saisie de l'UI. */
 export const uiDateIn = (offsetDays: number): string => uiDate(new Date(Date.now() + offsetDays * DAY_MS));
+
+/** La date et l'heure, au format de l'API, de dans `hours` heures. */
+export const hoursFromNow = (hours: number): ApiDateTime => hoursAgo(-hours);

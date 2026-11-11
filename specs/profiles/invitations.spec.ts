@@ -14,7 +14,7 @@ test.describe('Inviting a user', () => {
 		await test.step('The role is required', async () => {
 			await form.open(project.id);
 			await form.chooseUser(invitee.email);
-			await form.inviteRejected();
+			await form.submitRejected();
 			await expect(form.role).toHaveAttribute('error', /.+/);
 		});
 

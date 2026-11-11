@@ -1,11 +1,11 @@
 import { expect, test } from '@fixtures/test.fixture';
-import { at } from '@support/dates';
+import { at, hoursFromNow } from '@support/dates';
 import { uid } from '@support/unique';
 
 /** Objectif: Couvrir les arrivées et départs du jour | Périmètre: widgets de l'accueil et préremplissage du formulaire | Limites: un participant, sans groupe */
 test.describe('Planned movements of the day', () => {
-	// Une heure de fin de journée garde le mouvement « du jour » et « à venir » pendant toute la journée de travail.
-	const LATE_TODAY = '20:30:00+00:00';
+	// Dans une heure : le mouvement est « du jour » et encore à venir, sauf dans la dernière heure avant minuit.
+	const SOON = 1;
 
 	test('PH-06 · an arrival of the day opens the entry of the participant, filled', async ({
 		data,
@@ -17,7 +17,7 @@ test.describe('Planned movements of the day', () => {
 		await data.participant(project.id, {
 			firstName: 'Lise',
 			lastName,
-			startAvailability: at(0, LATE_TODAY),
+			startAvailability: hoursFromNow(SOON),
 			endAvailability: at(5),
 		});
 
@@ -41,7 +41,7 @@ test.describe('Planned movements of the day', () => {
 			firstName: 'Rosalind',
 			lastName,
 			startAvailability: at(-2),
-			endAvailability: at(0, LATE_TODAY),
+			endAvailability: hoursFromNow(SOON),
 		});
 		await data.participantMovement(project.id, { type: 'IN', participantIds: [participant.id] });
 

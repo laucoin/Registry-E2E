@@ -15,7 +15,7 @@ test.describe('Guest movement form', () => {
 		await test.step('An entry needs a reason and a guest', async () => {
 			await form.open(project.id);
 			await form.information.continueAs('IN');
-			await form.saveRejected();
+			await form.submitRejected();
 			await expect(form.reason.field).toHaveAttribute('error', /.+/);
 			await expect(form.guestFirstName).toHaveAttribute('error', /.+/);
 		});
@@ -40,7 +40,7 @@ test.describe('Guest movement form', () => {
 			await form.open(project.id);
 			await form.information.continueAs('OUT');
 			await form.leavingGuests.search(guest.lastName);
-			await expect(form.leavingGuests.noResult).toBeVisible();
+			await expect(form.noLeavingGuestFound).toBeVisible();
 		});
 	});
 });

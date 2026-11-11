@@ -46,7 +46,7 @@ export class RegisteredMovementFormPage {
 	}
 
 	/** Envoie un formulaire que la validation du frontend doit retenir : le formulaire reste ouvert. */
-	public async saveRejected(): Promise<void> {
+	public async submitRejected(): Promise<void> {
 		await this._submit.click();
 	}
 

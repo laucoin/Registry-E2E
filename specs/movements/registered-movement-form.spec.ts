@@ -29,7 +29,7 @@ test.describe('Registered movement form', () => {
 
 		await test.step('An exit without reason is refused', async () => {
 			await form.chooseParticipants([`Marie ${lastName}`]);
-			await form.saveRejected();
+			await form.submitRejected();
 			await expect(form.reason.field).toHaveAttribute('error', /.+/);
 		});
 

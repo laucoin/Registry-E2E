@@ -18,6 +18,11 @@ export class SessionPage {
 		this._logout = _page.getByTestId('navbar-account-menu-item').filter({ hasText: 'Se déconnecter' });
 	}
 
+	/** Ouvre une page de l'application, protégée ou non. */
+	public async visit(path: string): Promise<void> {
+		await this._page.goto(path);
+	}
+
 	/** Clique sur « Se connecter » puis s'authentifie auprès du fournisseur d'identité. */
 	public async signIn(account: Account): Promise<void> {
 		await this.loginButton.click();
