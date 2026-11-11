@@ -20,5 +20,7 @@ export class DateTimePicker {
 		if (!value) return;
 		await this.date.fill(value.date);
 		await this.time.fill(value.time);
+		// Le champ ne transmet sa valeur qu'en le quittant.
+		await this.time.press('Tab');
 	}
 }

@@ -65,7 +65,7 @@ export class TestData {
 
 	/** Un projet commencé il y a un mois et qui se termine dans un mois, de sorte que les mouvements datés de maintenant sont dans la plage. */
 	public async project(options: ProjectOption[] = [], overrides: Record<string, unknown> = {}): Promise<Project> {
-		const name = unique('E2E project');
+		const name = typeof overrides.name === 'string' ? overrides.name : unique('E2E project');
 		const created = await this.api.send<Created>('POST', '/projects', {
 			name,
 			begin: { date: isoDate(-30) },
