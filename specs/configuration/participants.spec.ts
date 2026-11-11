@@ -38,8 +38,8 @@ test.describe('Participants', () => {
 			await expect(participantForm.firstName).toHaveValue('Grace');
 			await expect(participantForm.lastName).toHaveValue(lastName);
 			await expect(participantForm.birthday).toHaveValue('09/12/2006');
-			await expect(participantForm.availabilityDate('start')).toHaveValue(start.date);
-			await expect(participantForm.availabilityDate('end')).toHaveValue(end.date);
+			await expect(participantForm.start.date).toHaveValue(start.date);
+			await expect(participantForm.end.date).toHaveValue(end.date);
 			await expect(participantForm.chosenGroups).toHaveText([group]);
 		});
 

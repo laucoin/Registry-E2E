@@ -9,11 +9,14 @@ import { FormSubmission } from '@components/form-submission.component';
 export class FormDialog {
 	public readonly root: Locator;
 	public readonly submitButton: Locator;
+	/** Le message d'erreur affiché dans la dialog quand le backend refuse l'envoi. */
+	public readonly error: Locator;
 	private readonly _submission: FormSubmission;
 
 	constructor(page: Page, testId: string) {
 		this.root = page.getByTestId(testId);
 		this.submitButton = this.root.getByTestId('form-dialog-submit');
+		this.error = this.root.getByTestId('form-error-callout');
 		this._submission = new FormSubmission(page);
 	}
 

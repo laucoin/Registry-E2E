@@ -51,6 +51,12 @@ export class TestData {
 		return { id: created.id, name };
 	}
 
+	/** L'identifiant du projet de ce nom que le compte voit, ou `undefined` s'il ne le voit pas. */
+	public async projectIdNamed(name: string): Promise<string | undefined> {
+		const page = await this.api.send<{ content: Project[] }>('GET', `/projects?q=${encodeURIComponent(name)}`);
+		return page.content.find((project) => project.name === name)?.id;
+	}
+
 	/** Un client d'API d'un autre compte, conservé jusqu'à la fin du scénario pour que ses réponses restent lisibles. */
 	public async apiAs(account: Account): Promise<ApiClient> {
 		let client = this._clients.get(account);

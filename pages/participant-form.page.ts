@@ -1,5 +1,6 @@
 import type { Locator, Page } from '@playwright/test';
 
+import { DateTimePicker, type UiDateTime } from '@components/date-time-picker.component';
 import { ElementPicker } from '@components/element-picker.component';
 import { FormSubmission } from '@components/form-submission.component';
 
@@ -8,12 +9,6 @@ export interface ParticipantIdentity {
 	lastName: string;
 	/** Au format de saisie de l'UI : jj/mm/aaaa. */
 	birthday: string;
-}
-
-/** Une borne de disponibilité, au format de saisie de l'UI : jj/mm/aaaa et hh:mm. */
-export interface UiDateTime {
-	date: string;
-	time: string;
 }
 
 export interface ParticipantDetails extends Partial<ParticipantIdentity> {
@@ -25,22 +20,29 @@ export interface ParticipantDetails extends Partial<ParticipantIdentity> {
 /** Objectif: Saisir un participant dans son formulaire | Périmètre: identité, disponibilité, groupes | Limites: sans utilisateur lié */
 export class ParticipantFormPage {
 	public readonly firstName: Locator;
+	/** Les champs d'identité portent leur message d'erreur dans l'attribut `error`. */
+	public readonly firstNameField: Locator;
+	public readonly lastNameField: Locator;
+	public readonly birthdayField: Locator;
 	public readonly lastName: Locator;
 	public readonly birthday: Locator;
 	/** Les groupes choisis, affichés sous le champ de recherche. */
 	public readonly chosenGroups: Locator;
-	private readonly _start: Locator;
-	private readonly _end: Locator;
+	public readonly start: DateTimePicker;
+	public readonly end: DateTimePicker;
 	private readonly _groups: ElementPicker;
 	private readonly _submit: Locator;
 	private readonly _submission: FormSubmission;
 
 	constructor(private readonly _page: Page) {
-		this.firstName = _page.getByTestId('participant-form-first-name-input').getByRole('textbox');
-		this.lastName = _page.getByTestId('participant-form-last-name-input').getByRole('textbox');
-		this.birthday = _page.getByTestId('participant-form-birthday-picker').getByRole('textbox');
-		this._start = _page.getByTestId('participant-form-begin-date-time-picker');
-		this._end = _page.getByTestId('participant-form-end-date-time-picker');
+		this.firstNameField = _page.getByTestId('participant-form-first-name-input');
+		this.lastNameField = _page.getByTestId('participant-form-last-name-input');
+		this.birthdayField = _page.getByTestId('participant-form-birthday-picker');
+		this.firstName = this.firstNameField.getByRole('textbox');
+		this.lastName = this.lastNameField.getByRole('textbox');
+		this.birthday = this.birthdayField.getByRole('textbox');
+		this.start = new DateTimePicker(_page.getByTestId('participant-form-begin-date-time-picker'));
+		this.end = new DateTimePicker(_page.getByTestId('participant-form-end-date-time-picker'));
 		const groups = _page.getByTestId('participant-form-groups-field');
 		this._groups = new ElementPicker(groups);
 		this.chosenGroups = groups.getByTestId('select-elements-field-row');
@@ -49,20 +51,24 @@ export class ParticipantFormPage {
 	}
 
 	public async create(projectId: string, identity: ParticipantIdentity): Promise<void> {
-		await this._page.goto(`/projects/${projectId}/configuration/participants/create`);
+		await this.openCreation(projectId);
 		await this.save(identity);
 	}
 
-	/** Le jour d'une borne de disponibilité (`start` ou `end`), tel que le formulaire l'affiche. */
-	public availabilityDate(bound: 'start' | 'end'): Locator {
-		return (bound === 'start' ? this._start : this._end).getByPlaceholder('jj/mm/aaaa');
+	public async openCreation(projectId: string): Promise<void> {
+		await this._page.goto(`/projects/${projectId}/configuration/participants/create`);
+	}
+
+	/** Envoie le formulaire sans attendre : la validation du frontend doit le retenir. */
+	public async submitRejected(): Promise<void> {
+		await this._submit.click();
 	}
 
 	/** Remplit les champs donnés puis enregistre ; le formulaire renvoie vers la page d'origine, sa disparition signale l'enregistrement. */
 	public async save(details: ParticipantDetails): Promise<void> {
 		await this._fillIdentity(details);
-		await this._fillDateTime(this._start, details.start);
-		await this._fillDateTime(this._end, details.end);
+		await this.start.fill(details.start);
+		await this.end.fill(details.end);
 		for (const group of details.groups ?? []) await this._groups.choose(group);
 		await this._submission.submit(this._submit);
 	}
@@ -71,11 +77,5 @@ export class ParticipantFormPage {
 		if (identity.firstName !== undefined) await this.firstName.fill(identity.firstName);
 		if (identity.lastName !== undefined) await this.lastName.fill(identity.lastName);
 		if (identity.birthday !== undefined) await this.birthday.fill(identity.birthday);
-	}
-
-	private async _fillDateTime(picker: Locator, value: UiDateTime | undefined): Promise<void> {
-		if (!value) return;
-		await picker.getByPlaceholder('jj/mm/aaaa').fill(value.date);
-		await picker.getByPlaceholder('hh:mm').fill(value.time);
 	}
 }
