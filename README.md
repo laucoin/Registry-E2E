@@ -41,7 +41,7 @@ the test fails at once with the message shown to the user, instead of waiting fo
 ## Tags
 
 - `@smoke`: the critical path, run by `pnpm test:smoke`.
-- `@exclusive`: a test that changes a seeded account (block, demote, delete); it runs alone, after the parallel ones.
+- `@exclusive`: a test that changes a seeded account (block, demote, delete) or signs in through the IdP, whose login rate the backend limits; it runs alone, after the parallel ones.
 
 ## Test data
 
