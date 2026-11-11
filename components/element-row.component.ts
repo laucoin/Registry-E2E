@@ -1,7 +1,16 @@
 import type { Locator } from '@playwright/test';
 
 /** Les commandes du menu d'une ligne, identifiées comme dans le frontend (`data-id` des entrées du menu). */
-export type RowAction = 'edit' | 'softDelete' | 'restore' | 'hardDelete' | 'movements-history' | 'members';
+export type RowAction =
+	| 'edit'
+	| 'softDelete'
+	| 'restore'
+	| 'hardDelete'
+	| 'movements-history'
+	| 'members'
+	| 'resolve'
+	| 'cancel'
+	| 'reopen';
 
 /**
  * Objectif: Lancer une commande du menu d'actions d'une ligne de liste | Périmètre: tout `app-element-actions` | Limites:

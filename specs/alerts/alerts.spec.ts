@@ -25,8 +25,7 @@ test.describe('Alerts', () => {
 			await expect(projectHome.alertDrawer).not.toHaveAttribute('open');
 		});
 
-		await test.step('The alert is active on the dashboard', async () => {
-			await projectHome.goto(project.id);
+		await test.step('The alert is immediately active on the dashboard', async () => {
 			await expect(projectHome.activeAlerts).toContainText(title);
 		});
 

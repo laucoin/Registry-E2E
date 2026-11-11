@@ -220,7 +220,7 @@ export class TestData {
 			dateTime: movement.dateTime ?? new Date().toISOString(),
 			type: movement.type,
 			reason: movement.reason,
-			// Le backend répond 500 sans `content`, même vide : le frontend l'envoie toujours.
+			// Le backend exige `content`, même vide, comme le frontend l'envoie toujours.
 			content: [],
 			guests: movement.guests ?? [
 				{ firstName: unique('Guest'), lastName: unique('Visitor'), birthday: '1990-01-01' },
