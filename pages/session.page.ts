@@ -18,6 +18,11 @@ export class SessionPage {
 		this._logout = _page.getByTestId('navbar-account-menu-item').filter({ hasText: 'Se déconnecter' });
 	}
 
+	/** Un lien de la barre de navigation, désigné par son libellé (« Projets », « Utilisateurs »…). */
+	public navLink(label: string): Locator {
+		return this._page.getByTestId('navbar-nav-link').filter({ hasText: label });
+	}
+
 	/** Ouvre une page de l'application, protégée ou non. */
 	public async visit(path: string): Promise<void> {
 		await this._page.goto(path);

@@ -10,6 +10,9 @@ export type RowAction =
 	| 'members'
 	| 'remove-member'
 	| 'export'
+	| 'block'
+	| 'unblock'
+	| 'delete'
 	| 'resolve'
 	| 'cancel'
 	| 'reopen';
