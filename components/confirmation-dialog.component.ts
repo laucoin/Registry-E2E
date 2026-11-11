@@ -1,4 +1,4 @@
-import type { Locator, Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 /**
  * Objectif: Répondre à la dialog de confirmation des actions sensibles | Périmètre: le `confirmation-dialog` global, avec ou
@@ -17,8 +17,16 @@ export class ConfirmationDialog {
 
 	/** Confirme ; la phrase n'est demandée que pour les actions irréversibles. */
 	public async confirm(phrase?: string): Promise<void> {
-		if (phrase) await this._phrase.fill(phrase);
+		if (phrase) await this._typePhrase(phrase);
 		await this._confirm.click();
 		await this._confirm.waitFor({ state: 'hidden' });
+	}
+
+	/** La dialog vide la phrase à son ouverture : une saisie trop précoce est effacée, d'où la vérification du bouton. */
+	private async _typePhrase(phrase: string): Promise<void> {
+		await expect(async () => {
+			await this._phrase.fill(phrase);
+			await expect(this._confirm).not.toHaveAttribute('disabled', { timeout: 1_000 });
+		}).toPass();
 	}
 }
