@@ -27,6 +27,10 @@ export class MovementInformationStep {
 	public async continueAs(type: MovementType): Promise<void> {
 		await this._type.click();
 		await this._page.getByRole('option', { name: TYPE_LABELS[type], exact: true }).click();
+		await this.next();
+	}
+
+	public async next(): Promise<void> {
 		await this._next.click();
 	}
 }

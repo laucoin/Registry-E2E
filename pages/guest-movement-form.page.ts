@@ -38,9 +38,13 @@ export class GuestMovementFormPage {
 		return this._guest.getByTestId('guest-list-fields-first-name-input');
 	}
 
+	public get guestLastName(): Locator {
+		return this._guest.getByTestId('guest-list-fields-last-name-input');
+	}
+
 	public async fillGuest(guest: ParticipantIdentity): Promise<void> {
 		await this.guestFirstName.getByRole('textbox').fill(guest.firstName);
-		await this._guest.getByTestId('guest-list-fields-last-name-input').getByRole('textbox').fill(guest.lastName);
+		await this.guestLastName.getByRole('textbox').fill(guest.lastName);
 		await this._guest.getByTestId('guest-list-fields-birthday-picker').getByRole('textbox').fill(guest.birthday);
 	}
 

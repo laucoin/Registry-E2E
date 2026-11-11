@@ -10,20 +10,21 @@ import { expect, type Locator } from '@playwright/test';
 export class ElementPicker {
 	private readonly _combobox: Locator;
 	private readonly _search: Locator;
-	private readonly _chosen: Locator;
+	/** Les éléments déjà choisis, affichés sous le champ. */
+	public readonly chosen: Locator;
 	/** Le message affiché quand la recherche ne trouve rien. */
 	public readonly noResult: Locator;
 
 	constructor(private readonly _root: Locator) {
 		this._combobox = _root.getByRole('combobox');
 		this._search = _root.getByRole('searchbox');
-		this._chosen = _root.getByTestId('select-elements-field-row');
+		this.chosen = _root.getByTestId('select-elements-field-row');
 		this.noResult = _root.getByText('Aucune personne ou groupe trouvé');
 	}
 
 	public async choose(name: string): Promise<void> {
 		await (await this.search(name)).click();
-		await expect(this._chosen.filter({ hasText: name })).toBeVisible();
+		await expect(this.chosen.filter({ hasText: name })).toBeVisible();
 	}
 
 	/** Recherche le texte et renvoie les propositions qui portent ce nom, pour vérifier ce que le champ propose. */

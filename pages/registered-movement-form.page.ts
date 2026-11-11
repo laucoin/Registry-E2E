@@ -13,7 +13,7 @@ export class RegisteredMovementFormPage {
 	public readonly information: MovementInformationStep;
 	public readonly reason: MovementReason;
 	public readonly previous: Locator;
-	private readonly _participants: ElementPicker;
+	public readonly participants: ElementPicker;
 	private readonly _submit: Locator;
 	private readonly _submission: FormSubmission;
 
@@ -21,7 +21,7 @@ export class RegisteredMovementFormPage {
 		this.information = new MovementInformationStep(_page);
 		this.reason = new MovementReason(_page.getByTestId('registered-movement-form-content-form'));
 		this.previous = _page.getByTestId('registered-movement-form-content-previous-button');
-		this._participants = new ElementPicker(_page.getByTestId('registered-participants-fields-participants-field'));
+		this.participants = new ElementPicker(_page.getByTestId('registered-participants-fields-participants-field'));
 		this._submit = _page.getByTestId('registered-movement-form-content-next-submit');
 		this._submission = new FormSubmission(_page);
 	}
@@ -39,7 +39,7 @@ export class RegisteredMovementFormPage {
 	}
 
 	public async chooseParticipants(participants: string[]): Promise<void> {
-		for (const participant of participants) await this._participants.choose(participant);
+		for (const participant of participants) await this.participants.choose(participant);
 	}
 
 	/** Envoie un formulaire que la validation du frontend doit retenir : le formulaire reste ouvert. */

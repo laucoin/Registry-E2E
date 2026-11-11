@@ -11,15 +11,21 @@ export class ElementRow {
 	private readonly _trigger: Locator;
 
 	constructor(public readonly root: Locator) {
-		this._trigger = root.getByTestId('element-actions-button');
+		// Le même menu est repris dans le tiroir de détail d'une ligne : seul celui affiché est utilisé.
+		this._trigger = root.getByTestId('element-actions-button').filter({ visible: true });
 	}
 
 	public action(id: RowAction): Locator {
-		return this.root.locator(`[data-test-id="element-actions-item"][data-id="${id}"]`);
+		return this.root.locator(`[data-test-id="element-actions-item"][data-id="${id}"]`).filter({ visible: true });
+	}
+
+	/** Ouvre le menu, pour lire quelles commandes sont proposées ou grisées. */
+	public async openMenu(): Promise<void> {
+		await this._trigger.click();
 	}
 
 	public async run(id: RowAction): Promise<void> {
-		await this._trigger.click();
+		await this.openMenu();
 		await this.action(id).click();
 	}
 }

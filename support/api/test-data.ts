@@ -215,10 +215,17 @@ export class TestData {
 			dateTime: movement.dateTime ?? new Date().toISOString(),
 			type: movement.type,
 			reason: movement.reason,
+			// Le backend répond 500 sans `content`, même vide : le frontend l'envoie toujours.
+			content: [],
 			guests: movement.guests ?? [
 				{ firstName: unique('Guest'), lastName: unique('Visitor'), birthday: '1990-01-01' },
 			],
 		});
+	}
+
+	/** Supprime un mouvement sans le supprimer définitivement : il reste visible de ceux qui peuvent le restaurer. */
+	public softDeleteMovement(projectId: string, movementId: string): Promise<unknown> {
+		return this.api.send('POST', `/projects/${projectId}/movements/${movementId}/disable`);
 	}
 
 	public async cleanup(): Promise<void> {
