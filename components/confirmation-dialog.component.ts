@@ -8,6 +8,8 @@ export class ConfirmationDialog {
 	public readonly root: Locator;
 	public readonly message: Locator;
 	public readonly confirmButton: Locator;
+	/** Le refus du backend, affiché dans la dialog. */
+	public readonly error: Locator;
 	private readonly _phrase: Locator;
 	private readonly _cancel: Locator;
 
@@ -16,14 +18,20 @@ export class ConfirmationDialog {
 		this._phrase = this.root.getByTestId('confirmation-dialog-phrase-input').getByRole('textbox');
 		this.message = this.root.getByTestId('confirmation-dialog-message');
 		this.confirmButton = this.root.getByTestId('confirmation-dialog-confirm-button');
+		this.error = this.root.getByTestId('form-error-callout');
 		this._cancel = this.root.getByTestId('confirmation-dialog-cancel-button');
 	}
 
-	/** Confirme ; la phrase n'est demandée que pour les actions irréversibles. */
+	/** Confirme et attend que la commande aboutisse ; la phrase n'est demandée que pour les actions irréversibles. */
 	public async confirm(phrase?: string): Promise<void> {
+		await this.submit(phrase);
+		await this.confirmButton.waitFor({ state: 'hidden' });
+	}
+
+	/** Confirme sans attendre la fermeture : la dialog reste ouverte, avec le refus, quand le backend refuse la commande. */
+	public async submit(phrase?: string): Promise<void> {
 		if (phrase) await this._typePhrase(phrase);
 		await this.confirmButton.click();
-		await this.confirmButton.waitFor({ state: 'hidden' });
 	}
 
 	public async cancel(): Promise<void> {

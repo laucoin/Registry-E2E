@@ -59,6 +59,6 @@ export class UsersListPage {
 	/** Exporte les données d'un utilisateur, après confirmation, et renvoie le fichier téléchargé. */
 	public async export(text: string): Promise<Download> {
 		await this.row(text).run('export');
-		return downloadOf(this._page, () => this.confirmation.confirm());
+		return downloadOf(this._page, () => this.confirmation.submit());
 	}
 }

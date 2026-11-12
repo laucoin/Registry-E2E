@@ -1,7 +1,7 @@
 import { expect, test } from '@fixtures/test.fixture';
 import { licensePlate } from '@support/unique';
 
-/** Objectif: Couvrir le comportement d'un formulaire à l'envoi | Périmètre: refus du backend, envoi en cours, conflit d'édition | Limites: sur la dialog des véhicules */
+/** Objectif: Couvrir le comportement d'un formulaire ou d'une confirmation à l'envoi | Périmètre: refus du backend, envoi en cours, conflit d'édition | Limites: sur les véhicules */
 test.describe('Form behaviours', () => {
 	test('FRM-01 · a refused form stays open with the message of the backend and its data, and saves on retry', async ({
 		data,
@@ -25,6 +25,33 @@ test.describe('Form behaviours', () => {
 		await test.step('Sending again saves the vehicle', async () => {
 			await form.save({});
 			await expect(list.row(plate).root).toBeVisible();
+		});
+	});
+
+	test('FRM-02 · a refused confirmation stays open with the message of the backend, which goes away once closed', async ({
+		data,
+		vehiclesList: list,
+	}) => {
+		const project = await data.project(['VEHICLE']);
+		const plate = licensePlate();
+		await data.vehicle(project.id, { licensePlate: plate, brand: 'Renault', model: 'Master' });
+
+		await test.step('The refusal is shown inside the confirmation, which stays open', async () => {
+			await list.goto(project.id);
+			await list.failNextSoftDelete(409, 'Véhicule encore en sortie');
+			await list.run(plate, 'softDelete');
+			await list.confirmation.confirmButton.click();
+			await expect(list.confirmation.error).toContainText('Véhicule encore en sortie');
+			await expect(list.confirmation.message).toBeVisible();
+			await expect(list.toasts.error).toHaveCount(0);
+		});
+
+		await test.step('Closed then opened again, the confirmation has forgotten it and deletes the vehicle', async () => {
+			await list.confirmation.cancel();
+			await list.run(plate, 'softDelete');
+			await expect(list.confirmation.error).toHaveCount(0);
+			await list.confirmation.confirm();
+			await expect(list.hiddenTag(plate)).toBeVisible();
 		});
 	});
 

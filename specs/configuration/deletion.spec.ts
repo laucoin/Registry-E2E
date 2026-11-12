@@ -26,8 +26,10 @@ test.describe('Deleting participants and groups', () => {
 		});
 
 		await test.step('A participant with movements cannot be permanently deleted', async () => {
-			await list.runConfirmed(moved, 'hardDelete');
-			await expect(list.toasts.error).toBeVisible();
+			await list.row(moved).run('hardDelete');
+			await list.confirmation.submit();
+			await expect(list.confirmation.error).toBeVisible();
+			await list.confirmation.cancel();
 			await expect(list.row(moved).root).toBeVisible();
 		});
 
@@ -75,8 +77,10 @@ test.describe('Deleting vehicles and activities', () => {
 		});
 
 		await test.step('A vehicle with movements cannot be permanently deleted, another one can', async () => {
-			await list.runConfirmed(used, 'hardDelete');
-			await expect(list.toasts.error).toBeVisible();
+			await list.row(used).run('hardDelete');
+			await list.confirmation.submit();
+			await expect(list.confirmation.error).toBeVisible();
+			await list.confirmation.cancel();
 			await list.runConfirmed(free, 'hardDelete');
 			await expect(list.row(free).root).toHaveCount(0);
 		});
@@ -103,8 +107,10 @@ test.describe('Deleting vehicles and activities', () => {
 		});
 
 		await test.step('An activity with movements cannot be permanently deleted, another one can', async () => {
-			await list.runConfirmed(used, 'hardDelete');
-			await expect(list.toasts.error).toBeVisible();
+			await list.row(used).run('hardDelete');
+			await list.confirmation.submit();
+			await expect(list.confirmation.error).toBeVisible();
+			await list.confirmation.cancel();
 			await list.runConfirmed(free, 'hardDelete');
 			await expect(list.row(free).root).toHaveCount(0);
 		});

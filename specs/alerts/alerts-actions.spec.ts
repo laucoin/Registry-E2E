@@ -58,8 +58,10 @@ test.describe('Alert actions', () => {
 		});
 
 		await test.step('The permanent deletion is refused and the alert stays', async () => {
-			await list.runConfirmed(title, 'hardDelete');
-			await expect(list.toasts.error).toBeVisible();
+			await list.row(title).run('hardDelete');
+			await list.confirmation.submit();
+			await expect(list.confirmation.error).toBeVisible();
+			await list.confirmation.cancel();
 			await expect(list.row(title).root).toBeVisible();
 		});
 	});

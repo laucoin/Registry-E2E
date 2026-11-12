@@ -91,8 +91,10 @@ test.describe('Blocking users', { tag: '@exclusive' }, () => {
 
 		await test.step('The last administrator of a project cannot be blocked', async () => {
 			await usersList.goto(coordinator.email);
-			await usersList.runConfirmed(coordinator.email, 'block');
-			await expect(usersList.toasts.error).toBeVisible();
+			await usersList.row(coordinator.email).run('block');
+			await usersList.confirmation.submit();
+			await expect(usersList.confirmation.error).toBeVisible();
+			await usersList.confirmation.cancel();
 			await expect(usersList.hiddenTag(coordinator.email)).toHaveCount(0);
 		});
 	});

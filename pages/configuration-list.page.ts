@@ -62,16 +62,12 @@ export class ConfigurationListPage {
 
 	/** Fait échouer le prochain chargement de la liste avec l'erreur donnée par le backend. */
 	public async failNextLoad(status: number, detail: string): Promise<void> {
-		await this._page.route(
-			`**/api/v2/projects/*/${this._section}?**`,
-			(route) =>
-				route.fulfill({
-					status,
-					contentType: 'application/problem+json',
-					body: JSON.stringify({ type: 'about:blank', status, title: 'Erreur', detail }),
-				}),
-			{ times: 1 },
-		);
+		await this._failNext(`**/api/v2/projects/*/${this._section}?**`, status, detail);
+	}
+
+	/** Fait échouer la prochaine suppression d'un élément de la liste avec l'erreur donnée par le backend. */
+	public async failNextSoftDelete(status: number, detail: string): Promise<void> {
+		await this._failNext(`**/api/v2/projects/*/${this._section}/*/disable`, status, detail);
 	}
 
 	public async openCreation(): Promise<void> {
@@ -111,5 +107,18 @@ export class ConfigurationListPage {
 	public async runConfirmed(text: string, action: RowAction, phrase?: string): Promise<void> {
 		await this.run(text, action);
 		await this.confirmation.confirm(phrase);
+	}
+
+	private async _failNext(url: string, status: number, detail: string): Promise<void> {
+		await this._page.route(
+			url,
+			(route) =>
+				route.fulfill({
+					status,
+					contentType: 'application/problem+json',
+					body: JSON.stringify({ type: 'about:blank', status, title: 'Erreur', detail }),
+				}),
+			{ times: 1 },
+		);
 	}
 }
