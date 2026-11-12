@@ -7,7 +7,7 @@ import { MovementReason } from '@components/movement-reason.component';
 
 /**
  * Objectif: Enregistrer l'entrée ou la sortie d'inscrits | Périmètre: étapes informations et contenu, motif |
- * Limites: sans l'étape des véhicules.
+ * Limites: l'étape des véhicules n'est pilotée que pour choisir et retirer un véhicule.
  */
 export class RegisteredMovementFormPage {
 	public readonly information: MovementInformationStep;
@@ -43,6 +43,43 @@ export class RegisteredMovementFormPage {
 
 	public async chooseParticipants(participants: string[]): Promise<void> {
 		for (const participant of participants) await this.participants.choose(participant);
+	}
+
+	/** L'interrupteur qui élargit le choix à tous les participants du projet, au-delà de ceux présents à la date. */
+	public get allParticipants(): Locator {
+		return this._page.getByTestId('registered-participants-fields-all-switch');
+	}
+
+	/** Le message du champ des participants quand la recherche ne trouve personne. */
+	public get nobodyFound(): Locator {
+		return this._page
+			.getByTestId('registered-participants-fields-participants-field')
+			.getByText('Aucune personne ou groupe trouvé');
+	}
+
+	/** Passe de l'étape du contenu à celle des véhicules. */
+	public async nextToVehicles(): Promise<void> {
+		await this._submit.click();
+	}
+
+	/** Les véhicules choisis à la troisième étape ; chacun porte l'erreur de son responsable dans `error`. */
+	public get vehicleItems(): Locator {
+		return this._page.getByTestId('registered-vehicles-fields-vehicle-item');
+	}
+
+	public get noVehicle(): Locator {
+		return this._page.getByTestId('registered-vehicles-fields-empty');
+	}
+
+	public async chooseVehicle(label: string): Promise<void> {
+		const select = this._page.getByTestId('registered-vehicles-fields-vehicle-select');
+		await select.click();
+		await select.getByRole('option').filter({ hasText: label }).click();
+	}
+
+	/** Envoie la dernière étape sans attendre : la validation du frontend doit la retenir. */
+	public async submitVehiclesRejected(): Promise<void> {
+		await this._page.getByTestId('registered-movement-form-submit').click();
 	}
 
 	/** Envoie un formulaire que la validation du frontend doit retenir : le formulaire reste ouvert. */

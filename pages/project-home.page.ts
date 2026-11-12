@@ -80,6 +80,19 @@ export class ProjectHomePage {
 		return this._page.getByTestId('project-active-alert-drawer');
 	}
 
+	/** Les autres entrées et sorties en cours (sans activité quand l'option est active). */
+	public get otherMovementRows(): Locator {
+		return this._page.getByRole('list', { name: 'Autres entrées/sorties en cours' }).getByTestId('movement-row');
+	}
+
+	/** Ouvre l'onglet des autres entrées et sorties, présent quand l'option activités sépare les deux listes. */
+	public async openOtherMovementsTab(): Promise<void> {
+		await this._page
+			.getByTestId('project-operational-monitoring-tab')
+			.and(this._page.locator('[data-id="otherMovements"]'))
+			.click();
+	}
+
 	/** La ligne à régulariser d'un participant, par son identifiant. */
 	public regularizationRow(participantId: string): Locator {
 		return this.regularizationRows.and(this._page.locator(`[data-id="${participantId}"]`));
