@@ -1,4 +1,4 @@
-import { type Browser, chromium, type FullConfig, selectors } from '@playwright/test';
+import { type Browser, chromium, type FullConfig, request, selectors } from '@playwright/test';
 
 import { type Account, ACCOUNTS, authFile, password } from '@support/accounts';
 import { defined } from '@support/defined';
@@ -31,6 +31,21 @@ async function signInWithRetries(browser: Browser, baseURL: string, account: Acc
 	});
 }
 
+/** Lectures appelées une fois avant les tests : juste après un redémarrage, le backend répond lentement à ses premières requêtes. */
+const WARM_UP_PATHS = ['/authentication/user/current', '/projects?size=5', '/users/profiles?size=5', '/users?size=5'];
+
+async function warmUpBackend(): Promise<void> {
+	const api = await request.newContext({
+		baseURL: process.env.API_URL ?? 'http://localhost:8081',
+		storageState: authFile('administrator'),
+	});
+	try {
+		for (const path of WARM_UP_PATHS) await api.get(`/api/v2${path}`);
+	} finally {
+		await api.dispose();
+	}
+}
+
 // Connecte chaque compte de départ utilisable une fois via le fournisseur d'identité configuré (variable IDP)
 // et stocke sa session dans .auth/. Plusieurs tentatives car le backend limite le débit des connexions.
 export default async function globalSetup(config: FullConfig): Promise<void> {
@@ -45,4 +60,5 @@ export default async function globalSetup(config: FullConfig): Promise<void> {
 	} finally {
 		await browser.close();
 	}
+	await warmUpBackend();
 }

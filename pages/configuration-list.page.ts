@@ -1,6 +1,7 @@
 import type { Download, Locator, Page } from '@playwright/test';
 
 import { ConfirmationDialog } from '@components/confirmation-dialog.component';
+import { downloadOf } from '@components/download.component';
 import { ElementRow, type RowAction } from '@components/element-row.component';
 import { ListArea } from '@components/list.component';
 import { Toasts } from '@components/toasts.component';
@@ -94,9 +95,7 @@ export class ConfigurationListPage {
 
 	/** Lance une commande qui télécharge un fichier et renvoie ce fichier. */
 	public async download(text: string, action: RowAction): Promise<Download> {
-		const file = this._page.waitForEvent('download');
-		await this.run(text, action);
-		return file;
+		return downloadOf(this._page, () => this.run(text, action));
 	}
 
 	/** Le tag « supprimé » d'une ligne. */

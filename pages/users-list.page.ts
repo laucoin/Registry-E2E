@@ -1,6 +1,7 @@
 import type { Download, Locator, Page } from '@playwright/test';
 
 import { ConfirmationDialog } from '@components/confirmation-dialog.component';
+import { downloadOf } from '@components/download.component';
 import { ElementRow, type RowAction } from '@components/element-row.component';
 import { Toasts } from '@components/toasts.component';
 
@@ -58,8 +59,6 @@ export class UsersListPage {
 	/** Exporte les données d'un utilisateur, après confirmation, et renvoie le fichier téléchargé. */
 	public async export(text: string): Promise<Download> {
 		await this.row(text).run('export');
-		const download = this._page.waitForEvent('download');
-		await this.confirmation.confirm();
-		return download;
+		return downloadOf(this._page, () => this.confirmation.confirm());
 	}
 }

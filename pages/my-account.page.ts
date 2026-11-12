@@ -1,5 +1,7 @@
 import type { Download, Locator, Page } from '@playwright/test';
 
+import { downloadOf } from '@components/download.component';
+
 /** Objectif: Gérer ses données personnelles depuis Mon compte | Périmètre: préférences, export et suppression du compte | Limites: la suppression n'est jamais confirmée */
 export class MyAccountPage {
 	public readonly deletionDialog: Locator;
@@ -49,9 +51,7 @@ export class MyAccountPage {
 
 	/** Exporte ses propres données et renvoie le fichier téléchargé. */
 	public async exportData(): Promise<Download> {
-		const file = this._page.waitForEvent('download');
-		await this._export.click();
-		return file;
+		return downloadOf(this._page, () => this._export.click());
 	}
 
 	public async openDeletion(): Promise<void> {

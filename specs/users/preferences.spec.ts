@@ -3,12 +3,11 @@ import { authFile } from '@support/accounts';
 
 /**
  * Objectif: Couvrir les préférences et le rafraîchissement automatique | Périmètre: thème, mode de rafraîchissement,
- * mise à jour de l'accueil d'un projet | Limites: les préférences du compte participant sont remises par défaut à la fin.
+ * mise à jour de l'accueil d'un projet | Limites: les préférences du compte participant sont remises par défaut à la
+ * fin ; les deux tests, dans le même fichier, s'exécutent l'un après l'autre.
  */
 test.describe('Preferences of a user', () => {
 	test.use({ storageState: authFile('participant') });
-	// Les deux tests changent le mode de rafraîchissement du même compte : ils s'exécutent l'un après l'autre.
-	test.describe.configure({ mode: 'serial' });
 
 	test('ACC-03 · the theme and the refresh mode are kept after a reload', async ({ data, myAccount }) => {
 		const participant = await data.apiAs('participant');

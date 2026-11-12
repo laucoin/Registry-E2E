@@ -9,6 +9,9 @@ export default defineConfig({
 	// Les scripts npm exécutent deux phases et fusionnent leurs blobs en un seul rapport HTML (voir package.json) ; une exécution unique produit directement du HTML.
 	reporter: process.env.PW_BLOB ? [['blob'], ['list']] : [['html', { open: 'never' }], ['list']],
 	globalSetup: './support/global-setup.ts',
+	// Des délais larges absorbent une machine chargée (IDE, builds) sans masquer un vrai blocage.
+	timeout: 60_000,
+	expect: { timeout: 10_000 },
 	use: {
 		baseURL: process.env.BASE_URL ?? 'http://localhost:4200',
 		// Le frontend pose `data-test-id` sur chaque élément interactif (et non le `data-testid` par défaut de Playwright).
