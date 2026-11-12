@@ -17,6 +17,7 @@ import { ProjectHomePage } from '@pages/project-home.page';
 import { ProjectsListPage } from '@pages/projects-list.page';
 import { RegisteredMovementFormPage } from '@pages/registered-movement-form.page';
 import { SessionPage } from '@pages/session.page';
+import { UsersListPage } from '@pages/users-list.page';
 import { VehicleFormPage } from '@pages/vehicle-form.page';
 import { TestData } from '@support/api/test-data';
 
@@ -42,6 +43,7 @@ interface Fixtures {
 	projectsList: ProjectsListPage;
 	registeredMovementForm: RegisteredMovementFormPage;
 	session: SessionPage;
+	usersList: UsersListPage;
 	vehicleForm: VehicleFormPage;
 	vehiclesList: ConfigurationListPage;
 }
@@ -75,6 +77,7 @@ export const test = base.extend<Fixtures>({
 	projectsList: async ({ page }, use) => use(new ProjectsListPage(page)),
 	registeredMovementForm: async ({ page }, use) => use(new RegisteredMovementFormPage(page)),
 	session: async ({ page }, use) => use(new SessionPage(page)),
+	usersList: async ({ page }, use) => use(new UsersListPage(page)),
 	vehicleForm: async ({ page }, use) => use(new VehicleFormPage(page)),
 	vehiclesList: async ({ page }, use) => use(new ConfigurationListPage(page, 'vehicles')),
 });

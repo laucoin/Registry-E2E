@@ -84,7 +84,7 @@ export class TestData {
 	}
 
 	/** L'utilisateur d'un compte de départ, tel que le backend le connaît. */
-	public async userOf(account: Account): Promise<{ email: string; firstName: string; lastName: string }> {
+	public async userOf(account: Account): Promise<{ id: string; email: string; firstName: string; lastName: string }> {
 		return (await this.apiAs(account)).send('GET', '/authentication/user/current');
 	}
 

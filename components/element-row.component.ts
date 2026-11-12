@@ -13,6 +13,7 @@ export type RowAction =
 	| 'block'
 	| 'unblock'
 	| 'delete'
+	| 'update-role'
 	| 'resolve'
 	| 'cancel'
 	| 'reopen';
