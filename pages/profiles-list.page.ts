@@ -1,7 +1,7 @@
 import type { Locator, Page } from '@playwright/test';
 
 import { ConfirmationDialog } from '@components/confirmation-dialog.component';
-import { ElementRow } from '@components/element-row.component';
+import { ElementRow, type RowAction } from '@components/element-row.component';
 
 /**
  * Objectif: Lire les profils d'un projet ou les invitations du compte, et répondre à une invitation | Périmètre: lignes
@@ -41,6 +41,27 @@ export class ProfilesListPage {
 	/** Le menu d'actions d'un profil. */
 	public menu(text: string): ElementRow {
 		return new ElementRow(this.row(text));
+	}
+
+	public blockedTag(text: string): Locator {
+		return this.row(text).getByTestId('project-profile-row-blocked-tag');
+	}
+
+	/** Refuse l'invitation, après confirmation. */
+	public async reject(text: string): Promise<void> {
+		await this.row(text).getByTestId('project-profile-row-reject-button').click();
+		await this.confirmation.confirm();
+	}
+
+	/** Lance une commande du menu d'un profil puis la confirme. */
+	public async runConfirmed(text: string, action: RowAction): Promise<void> {
+		await this.menu(text).run(action);
+		await this.confirmation.confirm();
+	}
+
+	/** La dialog de modification d'un profil : rôle et plage d'accès. */
+	public get editDialog(): Locator {
+		return this._page.getByTestId('project-profile-edition-form-edit-dialog');
 	}
 
 	public acceptButton(text: string): Locator {

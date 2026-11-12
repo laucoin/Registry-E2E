@@ -77,6 +77,18 @@ export class TestData {
 		return { id: created.id, name };
 	}
 
+	/** L'identifiant du profil d'un compte de départ dans un projet. */
+	public async profileIdOf(projectId: string, account: Account): Promise<string> {
+		const { email } = await this.userOf(account);
+		const page = await this.api.send<{ content: { id: string; user: { email: string } }[] }>(
+			'GET',
+			`/projects/${projectId}/profiles?size=100`,
+		);
+		const profile = page.content.find((candidate) => candidate.user.email === email);
+		if (!profile) throw new Error(`No profile of "${account}" in project ${projectId}`);
+		return profile.id;
+	}
+
 	/** Ajoute le projet aux favoris du compte de ce `TestData`. */
 	public favorite(projectId: string): Promise<unknown> {
 		return this.api.send('POST', `/projects/${projectId}/favorite`);
