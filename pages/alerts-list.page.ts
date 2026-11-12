@@ -1,5 +1,6 @@
 import type { Locator, Page } from '@playwright/test';
 
+import { CommunicationsDrawer } from '@components/communications-drawer.component';
 import { ConfirmationDialog } from '@components/confirmation-dialog.component';
 import { ElementRow, type RowAction } from '@components/element-row.component';
 import { Toasts } from '@components/toasts.component';
@@ -31,6 +32,13 @@ export class AlertsListPage {
 
 	public hiddenTag(title: string): Locator {
 		return this.row(title).root.getByTestId('alert-element-hidden-tag');
+	}
+
+	/** Ouvre les communications d'une alerte depuis sa ligne. */
+	public async openCommunications(title: string): Promise<CommunicationsDrawer> {
+		const row = this.row(title).root;
+		await row.getByTestId('alert-element-communications-button').click();
+		return new CommunicationsDrawer(row.getByTestId('alert-element-communications-drawer'));
 	}
 
 	/** Lance la commande puis la confirme. */

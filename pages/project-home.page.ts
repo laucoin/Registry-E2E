@@ -1,5 +1,6 @@
 import type { Locator, Page } from '@playwright/test';
 
+import { CommunicationsDrawer } from '@components/communications-drawer.component';
 import { AlertFormPage } from '@pages/alert-form.page';
 
 /**
@@ -85,6 +86,12 @@ export class ProjectHomePage {
 		return this._page.getByRole('list', { name: 'Autres entrées/sorties en cours' }).getByTestId('movement-row');
 	}
 
+	/** Ouvre les communications d'un mouvement en cours depuis sa ligne. */
+	public async openCommunications(row: Locator): Promise<CommunicationsDrawer> {
+		await row.getByTestId('movement-element-communications-button').click();
+		return new CommunicationsDrawer(row.getByTestId('movement-element-communications-drawer'));
+	}
+
 	/** Ouvre l'onglet des autres entrées et sorties, présent quand l'option activités sépare les deux listes. */
 	public async openOtherMovementsTab(): Promise<void> {
 		await this._page
@@ -100,6 +107,13 @@ export class ProjectHomePage {
 
 	public async goto(projectId: string): Promise<void> {
 		await this._page.goto(`/projects/${projectId}`);
+	}
+
+	/** Ouvre l'accueil et descend jusqu'au suivi opérationnel, chargé seulement quand il entre dans la fenêtre. */
+	public async gotoMonitoring(projectId: string): Promise<void> {
+		await this.goto(projectId);
+		await this.participantStats.waitFor();
+		await this._page.keyboard.press('End');
 	}
 
 	/** Ouvre la liste des participants d'une activité en cours depuis son compteur, et la renvoie. */

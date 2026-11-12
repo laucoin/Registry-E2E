@@ -87,3 +87,30 @@ test.describe('Movements in progress on the dashboard', () => {
 		});
 	});
 });
+
+test.describe('Participants of a movement', () => {
+	test('DRW-06 · the participants are split into all, adults, minors, one tab per group and the independent ones', async ({
+		data,
+		movementsList: list,
+	}) => {
+		const project = await data.project();
+		const minor = await data.participant(project.id, { birthday: '2015-06-01' });
+		const adult = await data.participant(project.id, { birthday: '1990-06-01' });
+		const content = [{ participantId: minor.id, poolName: 'Otters' }, { participantId: adult.id }];
+		await data.api.send('POST', `/projects/${project.id}/movements`, {
+			type: 'IN',
+			dateTime: new Date().toISOString(),
+			content,
+		});
+
+		await test.step('Every non-empty tab is offered', async () => {
+			await list.goto(project.id);
+			const drawer = await list.openParticipants(list.rows);
+			await expect(drawer.getByTestId('movement-participants-all-tab')).toContainText('(2)');
+			await expect(drawer.getByTestId('movement-participants-adults-tab')).toContainText('(1)');
+			await expect(drawer.getByTestId('movement-participants-children-tab')).toContainText('(1)');
+			await expect(drawer.getByTestId('movement-participants-pool-tab')).toHaveText('Otters (1)');
+			await expect(drawer.getByTestId('movement-participants-independent-tab')).toContainText('(1)');
+		});
+	});
+});
