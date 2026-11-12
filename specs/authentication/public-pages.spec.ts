@@ -29,4 +29,13 @@ test.describe('Anonymous visitor', () => {
 			await expect(globalError.callout).toBeVisible();
 		});
 	});
+
+	test('AUTH-07 · the sign-in page links to the configured support', async ({ session }) => {
+		await test.step('The support link is under the sign-in button', async () => {
+			await session.visit('/login');
+			await expect(session.loginButton).toBeVisible();
+			await expect(session.loginSupportLink).toHaveAttribute('href', /^https:\/\//);
+			await expect(session.loginSupportLink).toHaveAttribute('target', '_blank');
+		});
+	});
 });

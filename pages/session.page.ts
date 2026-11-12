@@ -18,6 +18,11 @@ export class SessionPage {
 		this._logout = _page.getByTestId('navbar-account-menu-item').filter({ hasText: 'Se déconnecter' });
 	}
 
+	/** Le lien vers le support, sous le bouton de connexion. */
+	public get loginSupportLink(): Locator {
+		return this._page.getByTestId('login-support-link');
+	}
+
 	/** Un lien du pied de page : `documentation`, `support`, `terms` ou `privacy`. */
 	public footerLink(name: 'documentation' | 'support' | 'terms' | 'privacy'): Locator {
 		return this._page.getByTestId(`footer-${name}-link`);
