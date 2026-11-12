@@ -227,6 +227,7 @@ Testés une fois, sur la liste des participants, plus une vérification ciblée 
 | SEC-02 | P1  | API    | Refus par rôle sur les points sensibles : historique, activités et véhicules (RP_P), restauration (RP_P), suppression définitive (RP_C, RP_P), profils (RP_C en écriture) |
 | SEC-03 | P1  | API    | Une requête de modification sans jeton CSRF, ou avec un jeton invalide, est rejetée                                                                                       |
 | SEC-04 | P1  | UI     | Un profil dont la plage d'accès est terminée n'ouvre plus le projet ; un utilisateur sans profil non plus                                                                 |
+| SEC-05 | P1  | API    | RP_P ne peut pas modifier l'utilisateur lié d'un participant (`403 PARTICIPANT_USER_LINK_FORBIDDEN`), seulement retirer son propre lien                                   |
 
 La traçabilité dans `tb_audit` (§10) n'est observable ni par l'UI ni par l'API : elle reste aux tests du backend.
 
