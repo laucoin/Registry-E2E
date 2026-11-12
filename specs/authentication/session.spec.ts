@@ -37,4 +37,15 @@ test.describe('Session', { tag: '@exclusive' }, () => {
 			await expect(page).toHaveURL(/\/login/);
 		});
 	});
+
+	test('AUTH-05 · a blocked user is refused after the identity provider, on the global error page', async ({
+		globalError,
+		session,
+	}) => {
+		await test.step('The blocked account signs in and is told it is locked', async () => {
+			await session.visit('/login');
+			await session.signIn('blocked-user');
+			await expect(globalError.callout).toContainText('Ton compte a été bloqué');
+		});
+	});
 });

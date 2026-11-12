@@ -35,4 +35,27 @@ test.describe('Project rules', () => {
 			expect((await api.raw('POST', `/users/profiles/${project.id}/support`)).status()).toBe(403);
 		});
 	});
+
+	test('PL-07 · a deleted project stays editable, while its content is refused', async ({ data }) => {
+		const project = await data.project();
+		await data.api.send('POST', `/projects/${project.id}/disable`);
+
+		await test.step('The project itself can still be edited', async () => {
+			const edited = {
+				name: `${project.name} edited`,
+				begin: { date: isoDate(-30) },
+				end: { date: isoDate(30) },
+				options: [],
+			};
+			expect((await data.api.raw('PATCH', `/projects/${project.id}`, edited)).status()).toBe(200);
+		});
+
+		await test.step('Its content can be neither read nor created', async () => {
+			const participant = { firstName: 'Ada', lastName: 'LOVELACE', birthday: '2000-01-01' };
+			expect((await data.api.raw('GET', `/projects/${project.id}/participants`)).status()).toBe(403);
+			expect((await data.api.raw('POST', `/projects/${project.id}/participants`, participant)).status()).toBe(
+				403,
+			);
+		});
+	});
 });

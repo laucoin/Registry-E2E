@@ -109,7 +109,7 @@ Testés une fois, sur la liste des participants, plus une vérification ciblée 
 | PL-04  | P1  | UI     | [R_A] Sans profil : « Rejoindre pour support » après confirmation donne accès au projet                                                     |
 | PL-05  | P1  | UI+API | [R_U] Aucune action de support ; l'API refuse la création d'un profil de support                                                            |
 | PL-06  | P0  | UI     | [RP_A] Supprimer (grisé, tag, dialog explicative au clic) → Restaurer → Supprimer définitivement, chacun confirmé                           |
-| PL-07  | P1  | UI     | [RP_A] « Modifier » ouvre le formulaire prérempli ; absent sur un projet supprimé                                                           |
+| PL-07  | P1  | UI+API | [RP_A] « Modifier » ouvre le formulaire prérempli ; un projet supprimé reste modifiable, mais son contenu est refusé (lecture et création)  |
 | CFG-01 | P1  | UI     | Configuration : informations du projet ; bouton de modification RP_A seulement ; tuiles selon les options et le rôle, avec compteur et lien |
 | CFG-02 | P1  | UI     | [RP_A] Zone de danger : suppression et suppression définitive ; absente pour RP_C et RP_P                                                   |
 

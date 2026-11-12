@@ -1,10 +1,10 @@
 import { expect, test } from '@fixtures/test.fixture';
 import { rejection } from '@support/api/problem';
-import { at, isoHoursAgo } from '@support/dates';
+import { at, epochOf, isoHoursAgo } from '@support/dates';
 
 /**
  * Objectif: Vérifier les règles du backend sur les mouvements | Périmètre: dates acceptées, conducteur, disponibilités,
- * mouvement de fin de séjour | Limites: participants inscrits seulement.
+ * correction et suppression d'un mouvement de fin de séjour | Limites: participants inscrits seulement.
  */
 test.describe('Movement rules', () => {
 	const inMinutes = (minutes: number): string => new Date(Date.now() + minutes * 60_000).toISOString();
@@ -70,7 +70,7 @@ test.describe('Availability of the participants', () => {
 });
 
 test.describe('Movements ending a stay', () => {
-	test('MVL-05 · a movement ending the stay is neither updated nor deleted, and a movement keeps its type', async ({
+	test('MVL-05 · a movement ending the stay can be corrected or deleted, never before a later movement, and a movement keeps its type', async ({
 		data,
 	}) => {
 		const project = await data.project();
@@ -86,12 +86,18 @@ test.describe('Movements ending a stay', () => {
 		const { id: entryId } = await data.api.send<{ id: string }>('POST', base, entry);
 		const { id: exitId } = await data.api.send<{ id: string }>('POST', base, exit);
 
-		await test.step('The definitive exit can be neither updated nor deleted', async () => {
-			expect(await rejection(await data.api.raw('PATCH', `${base}/${exitId}`, exit))).toMatch(
-				/MOVEMENT_CANNOT_BE_UPDATED$/,
+		await test.step('Correcting the date of the definitive exit moves the effective departure', async () => {
+			const corrected = { ...exit, dateTime: isoHoursAgo(2) };
+			await data.api.send('PATCH', `${base}/${exitId}`, corrected);
+			expect(epochOf((await data.participantOf(project.id, id)).effectiveDeparture)).toBe(
+				epochOf(corrected.dateTime),
 			);
-			expect(await rejection(await data.api.raw('DELETE', `${base}/${exitId}`))).toMatch(
-				/MOVEMENT_CANNOT_BE_DELETED$/,
+		});
+
+		await test.step('The definitive exit cannot be moved before a later movement', async () => {
+			const beforeEntry = { ...exit, dateTime: isoHoursAgo(4) };
+			expect(await rejection(await data.api.raw('PATCH', `${base}/${exitId}`, beforeEntry))).toMatch(
+				/MOVEMENT_DEFINITIVE_DEPARTURE_BEFORE_LATER_MOVEMENTS$/,
 			);
 		});
 
@@ -100,6 +106,11 @@ test.describe('Movements ending a stay', () => {
 			expect(await rejection(await data.api.raw('PATCH', `${base}/${entryId}`, changed))).toMatch(
 				/MOVEMENT_UPDATE_CHANGE_TYPE$/,
 			);
+		});
+
+		await test.step('Deleting the definitive exit clears the effective departure', async () => {
+			await data.api.send('DELETE', `${base}/${exitId}`);
+			expect((await data.participantOf(project.id, id)).effectiveDeparture).toBeNull();
 		});
 	});
 });
