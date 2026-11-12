@@ -86,6 +86,11 @@ export class ProjectHomePage {
 		return this._page.getByRole('list', { name: 'Autres entrées/sorties en cours' }).getByTestId('movement-row');
 	}
 
+	/** Les anniversaires du jour, réservés aux administrateurs et coordinateurs du projet. */
+	public get birthdayRows(): Locator {
+		return this._page.getByTestId('birthday-row');
+	}
+
 	/** Ouvre les communications d'un mouvement en cours depuis sa ligne. */
 	public async openCommunications(row: Locator): Promise<CommunicationsDrawer> {
 		await row.getByTestId('movement-element-communications-button').click();

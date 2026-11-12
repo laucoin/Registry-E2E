@@ -1,8 +1,8 @@
 import type { Locator, Page } from '@playwright/test';
 
 /**
- * Objectif: Lire les détails d'un participant hors de son formulaire | Périmètre: dialog de ses groupes, historique de
- * ses mouvements et frise de présence | Limites: sans les actions de l'historique.
+ * Objectif: Lire les détails d'un élément hors de son formulaire | Périmètre: dialog des groupes d'un participant,
+ * historiques de mouvements, frises de présence et statistiques | Limites: sans les actions de l'historique.
  */
 export class ParticipantDetailsPage {
 	public readonly groupItems: Locator;
@@ -18,6 +18,16 @@ export class ParticipantDetailsPage {
 	/** Le bouton « premier groupe et N autres » d'une ligne de participant, qui ouvre la dialog de ses groupes. */
 	public groupsButton(row: Locator): Locator {
 		return row.getByTestId('participant-row-groups-button');
+	}
+
+	/** Les statistiques de l'historique d'un véhicule ou d'une activité, désignées par leur data-test-id. */
+	public statistic(testId: string): Locator {
+		return this._page.getByTestId(testId);
+	}
+
+	/** La frise de présence de l'historique d'un véhicule. */
+	public get vehicleTimeline(): Locator {
+		return this._page.getByTestId('vehicle-movements-list-timeline');
 	}
 
 	/** Le choix de l'utilisateur lié, dans le formulaire du participant. */

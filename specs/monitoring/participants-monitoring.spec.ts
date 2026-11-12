@@ -33,4 +33,18 @@ test.describe('Participants monitoring', () => {
 			await expect(monitoring.row(out)).toBeVisible();
 		});
 	});
+
+	test('MON-03 · the vehicles monitoring needs the vehicle option', async ({ data, page, session }) => {
+		const [withVehicles, without] = [await data.project(['VEHICLE']), await data.project()];
+
+		await test.step('With the option, the vehicles are followed', async () => {
+			await session.visit(`/projects/${withVehicles.id}/vehicles`);
+			await expect(page).toHaveURL(new RegExp(`/projects/${withVehicles.id}/vehicles`));
+		});
+
+		await test.step('Without the option, the projects are shown instead', async () => {
+			await session.visit(`/projects/${without.id}/vehicles`);
+			await expect(page).toHaveURL(/\/projects$/);
+		});
+	});
 });

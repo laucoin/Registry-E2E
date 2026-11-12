@@ -44,6 +44,12 @@ export class MovementsListPage {
 		return row.getByTestId('movement-element-participants-drawer');
 	}
 
+	/** Ouvre les véhicules d'un mouvement depuis son compteur, et renvoie le tiroir. */
+	public async openVehicles(row: Locator): Promise<Locator> {
+		await row.getByTestId('movement-details-vehicles-button').click();
+		return row.getByTestId('movement-element-vehicles-drawer');
+	}
+
 	/** Lance la commande sur la ligne puis la confirme. */
 	public async runConfirmed(action: RowAction): Promise<void> {
 		await this.only.run(action);
