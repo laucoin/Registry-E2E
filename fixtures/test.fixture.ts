@@ -8,6 +8,7 @@ import { GlobalErrorPage } from '@pages/global-error.page';
 import { GroupFormPage } from '@pages/group-form.page';
 import { GroupMembersPage } from '@pages/group-members.page';
 import { GuestMovementFormPage } from '@pages/guest-movement-form.page';
+import { HomePage } from '@pages/home.page';
 import { MovementsListPage } from '@pages/movements-list.page';
 import { ParticipantFormPage } from '@pages/participant-form.page';
 import { ProfileInvitationFormPage } from '@pages/profile-invitation-form.page';
@@ -33,6 +34,7 @@ interface Fixtures {
 	groupMembers: GroupMembersPage;
 	groupsList: ConfigurationListPage;
 	guestMovementForm: GuestMovementFormPage;
+	home: HomePage;
 	movementsList: MovementsListPage;
 	participantForm: ParticipantFormPage;
 	participantsList: ConfigurationListPage;
@@ -67,6 +69,7 @@ export const test = base.extend<Fixtures>({
 	groupMembers: async ({ page }, use) => use(new GroupMembersPage(page)),
 	groupsList: async ({ page }, use) => use(new ConfigurationListPage(page, 'groups')),
 	guestMovementForm: async ({ page }, use) => use(new GuestMovementFormPage(page)),
+	home: async ({ page }, use) => use(new HomePage(page)),
 	movementsList: async ({ page }, use) => use(new MovementsListPage(page)),
 	participantForm: async ({ page }, use) => use(new ParticipantFormPage(page)),
 	participantsList: async ({ page }, use) => use(new ConfigurationListPage(page, 'participants')),

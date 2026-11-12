@@ -77,6 +77,11 @@ export class TestData {
 		return { id: created.id, name };
 	}
 
+	/** Ajoute le projet aux favoris du compte de ce `TestData`. */
+	public favorite(projectId: string): Promise<unknown> {
+		return this.api.send('POST', `/projects/${projectId}/favorite`);
+	}
+
 	/** L'identifiant du projet de ce nom que le compte voit, ou `undefined` s'il ne le voit pas. */
 	public async projectIdNamed(name: string): Promise<string | undefined> {
 		const page = await this.api.send<{ content: Project[] }>('GET', `/projects?q=${encodeURIComponent(name)}`);
