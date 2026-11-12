@@ -2,23 +2,46 @@ import type { Locator, Page } from '@playwright/test';
 
 import { CommunicationsDrawer } from '@components/communications-drawer.component';
 import { ConfirmationDialog } from '@components/confirmation-dialog.component';
+import { DateTimePicker } from '@components/date-time-picker.component';
 import { ElementRow, type RowAction } from '@components/element-row.component';
 import { Toasts } from '@components/toasts.component';
 
-/** Objectif: Parcourir la liste des alertes d'un projet et agir sur une alerte | Périmètre: lignes, statut, menu d'actions | Limites: sans filtres */
+/** Objectif: Parcourir la liste des alertes d'un projet et agir sur une alerte | Périmètre: statistiques, filtres, lignes, statut, menu d'actions | Limites: sans le tri */
 export class AlertsListPage {
 	public readonly rows: Locator;
 	public readonly confirmation: ConfirmationDialog;
 	public readonly toasts: Toasts;
+	/** Les statistiques du projet, dont le contenu se lit dans l'arbre d'accessibilité (leur texte est dans le shadow DOM). */
+	public readonly resolutionStat: Locator;
+	public readonly rateStat: Locator;
+	/** Le filtre « Après le ». */
+	public readonly after: DateTimePicker;
 
 	constructor(private readonly _page: Page) {
 		this.rows = _page.getByTestId('alert-row');
 		this.confirmation = new ConfirmationDialog(_page);
 		this.toasts = new Toasts(_page);
+		this.resolutionStat = _page.getByRole('group', { name: 'Temps moyen de résolution' });
+		this.rateStat = _page.getByRole('group', { name: 'Taux d’alertes réelles' });
+		this.after = new DateTimePicker(_page.getByTestId('alerts-search-fields-from-picker'));
 	}
 
 	public async goto(projectId: string): Promise<void> {
 		await this._page.goto(`/projects/${projectId}/alerts`);
+	}
+
+	/** Filtre sur le titre ; la recherche part à la validation du champ. */
+	public async search(text: string): Promise<void> {
+		const input = this._page.getByTestId('alerts-search-fields-q-input').getByRole('textbox');
+		await input.fill(text);
+		await input.press('Enter');
+	}
+
+	/** Ne garde que les alertes du statut donné (« En cours », « Résolue », « Annulée »). */
+	public async filterStatus(label: string): Promise<void> {
+		const select = this._page.getByTestId('alerts-search-fields-status-select');
+		await select.click();
+		await select.getByRole('option', { name: label, exact: true }).click();
 	}
 
 	/** La ligne de l'alerte qui porte ce titre. */

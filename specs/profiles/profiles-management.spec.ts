@@ -108,7 +108,7 @@ test.describe('Project members seen by a coordinator', () => {
 test.describe('An invitation refused by the invited user', () => {
 	test.use({ storageState: authFile('participant') });
 
-	test('PRF-02 · an invitation gives no access before it is accepted, and can be refused', async ({
+	test('PRF-02 · ACC-04 · an invitation gives no access before it is accepted, and can be refused', async ({
 		data,
 		profilesList,
 	}) => {

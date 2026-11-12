@@ -47,7 +47,7 @@ test.describe('An invitation seen by another member', () => {
 test.describe('An invitation answered by the invited user', () => {
 	test.use({ storageState: authFile('participant') });
 
-	test('PRF-01 · the invited user accepts from their invitations after confirming', async ({
+	test('PRF-01 · ACC-04 · the invited user accepts from their invitations after confirming', async ({
 		data,
 		profilesList,
 	}) => {
