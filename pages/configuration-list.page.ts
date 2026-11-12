@@ -2,6 +2,7 @@ import type { Download, Locator, Page } from '@playwright/test';
 
 import { ConfirmationDialog } from '@components/confirmation-dialog.component';
 import { ElementRow, type RowAction } from '@components/element-row.component';
+import { ListArea } from '@components/list.component';
 import { Toasts } from '@components/toasts.component';
 
 /** Les listes de la configuration d'un projet : la section de l'URL et le préfixe des data-test-id de ses lignes. */
@@ -21,6 +22,7 @@ export class ConfigurationListPage {
 	public readonly rows: Locator;
 	public readonly confirmation: ConfirmationDialog;
 	public readonly toasts: Toasts;
+	public readonly list: ListArea;
 	private readonly _create: Locator;
 
 	constructor(
@@ -31,10 +33,44 @@ export class ConfigurationListPage {
 		this._create = _page.getByTestId(`${_section}-list-create-button`);
 		this.confirmation = new ConfirmationDialog(_page);
 		this.toasts = new Toasts(_page);
+		this.list = new ListArea(_page);
 	}
 
-	public async goto(projectId: string): Promise<void> {
-		await this._page.goto(`/projects/${projectId}/configuration/${this._section}`);
+	/** Ouvre la liste, avec les filtres donnés dans l'URL (`q`, `sort`…). */
+	public async goto(projectId: string, query = ''): Promise<void> {
+		await this._page.goto(`/projects/${projectId}/configuration/${this._section}${query}`);
+	}
+
+	public async reload(): Promise<void> {
+		await this._page.reload();
+	}
+
+	/** Le champ de recherche textuelle ; la recherche part au changement, et tout de suite à Entrée. */
+	public get search(): Locator {
+		return this._page.getByTestId(`${this._section}-search-fields-q-input`).getByRole('textbox');
+	}
+
+	/** Le filtre de visibilité, proposé seulement à ceux qui peuvent restaurer. */
+	public get visibilityFilter(): Locator {
+		return this._page.getByTestId(`${this._section}-search-fields-is-visible-select`);
+	}
+
+	public get createButton(): Locator {
+		return this._create;
+	}
+
+	/** Fait échouer le prochain chargement de la liste avec l'erreur donnée par le backend. */
+	public async failNextLoad(status: number, detail: string): Promise<void> {
+		await this._page.route(
+			`**/api/v2/projects/*/${this._section}?**`,
+			(route) =>
+				route.fulfill({
+					status,
+					contentType: 'application/problem+json',
+					body: JSON.stringify({ type: 'about:blank', status, title: 'Erreur', detail }),
+				}),
+			{ times: 1 },
+		);
 	}
 
 	public async openCreation(): Promise<void> {
