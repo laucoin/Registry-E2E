@@ -38,6 +38,18 @@ export class SessionPage {
 		await this._page.goto(path);
 	}
 
+	/** Prend la main sur l'horloge du navigateur, avant d'ouvrir la page dont on veut observer le rafraîchissement. */
+	public async controlClock(): Promise<void> {
+		await this._page.clock.install();
+	}
+
+	/** Fait passer le temps du navigateur, minuteurs compris, sans attendre réellement. */
+	public async letTimePass(seconds: number): Promise<void> {
+		await this._page.clock.fastForward(seconds * 1000);
+		// Le service de rafraîchissement vérifie les sources toutes les cinq secondes.
+		await this._page.clock.runFor(6_000);
+	}
+
 	/** Supprime le jeton d'accès de la session, comme à son expiration : le jeton de rafraîchissement reste. */
 	public async expireAccessToken(): Promise<void> {
 		await this._page.context().clearCookies({ name: 'registry_access_token' });
