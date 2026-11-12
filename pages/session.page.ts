@@ -18,6 +18,16 @@ export class SessionPage {
 		this._logout = _page.getByTestId('navbar-account-menu-item').filter({ hasText: 'Se déconnecter' });
 	}
 
+	/** Un lien du pied de page : `documentation`, `support`, `terms` ou `privacy`. */
+	public footerLink(name: 'documentation' | 'support' | 'terms' | 'privacy'): Locator {
+		return this._page.getByTestId(`footer-${name}-link`);
+	}
+
+	/** Le titre de page (`sgdf-page-title`) par lequel commence chaque page de l'application. */
+	public get pageTitle(): Locator {
+		return this._page.locator('sgdf-page-title').first();
+	}
+
 	/** Un lien de la barre de navigation, désigné par son libellé (« Projets », « Utilisateurs »…). */
 	public navLink(label: string): Locator {
 		return this._page.getByTestId('navbar-nav-link').filter({ hasText: label });

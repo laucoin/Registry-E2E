@@ -4,7 +4,7 @@ import { ConfirmationDialog } from '@components/confirmation-dialog.component';
 
 /**
  * Objectif: Lire et utiliser l'accueil de l'application | Périmètre: projets favoris, invitations reçues, projets
- * demandant de l'attention, création de projet | Limites: sans les accès rapides.
+ * demandant de l'attention, création de projet, accès rapides | Limites: les liens externes ne sont pas suivis.
  */
 export class HomePage {
 	public readonly favoriteCards: Locator;
@@ -20,6 +20,23 @@ export class HomePage {
 		this.attentionNames = _page.getByTestId('home-attention-projects-project-name');
 		this.createButton = _page.getByTestId('home-create-button');
 		this.confirmation = new ConfirmationDialog(_page);
+	}
+
+	/** Les accès rapides vers les pages de l'application, et vers la documentation et le support. */
+	public get internalShortcuts(): Locator {
+		return this._page.getByTestId('home-quick-access-internal-button');
+	}
+
+	public get externalShortcuts(): Locator {
+		return this._page.getByTestId('home-quick-access-external-button');
+	}
+
+	public get favoritesSeeAll(): Locator {
+		return this._page.getByTestId('home-favorite-projects-see-all-button');
+	}
+
+	public get invitationsSeeAll(): Locator {
+		return this._page.getByTestId('home-invitations-see-all-button');
 	}
 
 	public async goto(): Promise<void> {
