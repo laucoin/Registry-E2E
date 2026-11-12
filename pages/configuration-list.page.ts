@@ -1,4 +1,4 @@
-import type { Locator, Page } from '@playwright/test';
+import type { Download, Locator, Page } from '@playwright/test';
 
 import { ConfirmationDialog } from '@components/confirmation-dialog.component';
 import { ElementRow, type RowAction } from '@components/element-row.component';
@@ -49,6 +49,18 @@ export class ConfigurationListPage {
 	/** L'action principale d'une ligne, affichée à côté du menu (p. ex. les membres d'un groupe). */
 	public primaryAction(text: string): Locator {
 		return this.row(text).root.getByTestId('element-primary-action-button');
+	}
+
+	/** Le statut d'une ligne (présence d'un participant, disponibilité d'un véhicule…). */
+	public statusTag(text: string): Locator {
+		return this.row(text).root.getByTestId(`${SECTIONS[this._section]}-row-status-tag`);
+	}
+
+	/** Lance une commande qui télécharge un fichier et renvoie ce fichier. */
+	public async download(text: string, action: RowAction): Promise<Download> {
+		const file = this._page.waitForEvent('download');
+		await this.run(text, action);
+		return file;
 	}
 
 	/** Le tag « supprimé » d'une ligne. */
