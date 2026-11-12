@@ -110,7 +110,7 @@ test.describe('Movements ending a stay', () => {
 
 		await test.step('Deleting the definitive exit clears the effective departure', async () => {
 			await data.api.send('DELETE', `${base}/${exitId}`);
-			expect((await data.participantOf(project.id, id)).effectiveDeparture).toBeNull();
+			expect(epochOf((await data.participantOf(project.id, id)).effectiveDeparture)).toBeNull();
 		});
 	});
 });
