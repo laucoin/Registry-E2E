@@ -28,6 +28,22 @@ export class SessionPage {
 		await this._page.goto(path);
 	}
 
+	/** Supprime le jeton d'accès de la session, comme à son expiration : le jeton de rafraîchissement reste. */
+	public async expireAccessToken(): Promise<void> {
+		await this._page.context().clearCookies({ name: 'registry_access_token' });
+	}
+
+	public async reload(): Promise<void> {
+		await this._page.reload();
+	}
+
+	/** Rend le fournisseur d'identité injoignable pour la prochaine tentative de connexion. */
+	public async makeIdentityProviderUnreachable(): Promise<void> {
+		await this._page.route('**/api/v2/authentication/login/uri**', (route) => route.abort('connectionrefused'), {
+			times: 1,
+		});
+	}
+
 	/** Clique sur « Se connecter » puis s'authentifie auprès du fournisseur d'identité. */
 	public async signIn(account: Account): Promise<void> {
 		await this.loginButton.click();

@@ -10,8 +10,10 @@ import { GroupMembersPage } from '@pages/group-members.page';
 import { GuestMovementFormPage } from '@pages/guest-movement-form.page';
 import { HomePage } from '@pages/home.page';
 import { MovementsListPage } from '@pages/movements-list.page';
+import { MyAccountPage } from '@pages/my-account.page';
 import { ParticipantDetailsPage } from '@pages/participant-details.page';
 import { ParticipantFormPage } from '@pages/participant-form.page';
+import { ParticipantsMonitoringPage } from '@pages/participants-monitoring.page';
 import { ProfileInvitationFormPage } from '@pages/profile-invitation-form.page';
 import { ProfilesListPage } from '@pages/profiles-list.page';
 import { ProjectFormPage } from '@pages/project-form.page';
@@ -37,9 +39,11 @@ interface Fixtures {
 	guestMovementForm: GuestMovementFormPage;
 	home: HomePage;
 	movementsList: MovementsListPage;
+	myAccount: MyAccountPage;
 	participantDetails: ParticipantDetailsPage;
 	participantForm: ParticipantFormPage;
 	participantsList: ConfigurationListPage;
+	participantsMonitoring: ParticipantsMonitoringPage;
 	profileInvitationForm: ProfileInvitationFormPage;
 	profilesList: ProfilesListPage;
 	projectForm: ProjectFormPage;
@@ -73,9 +77,11 @@ export const test = base.extend<Fixtures>({
 	guestMovementForm: async ({ page }, use) => use(new GuestMovementFormPage(page)),
 	home: async ({ page }, use) => use(new HomePage(page)),
 	movementsList: async ({ page }, use) => use(new MovementsListPage(page)),
+	myAccount: async ({ page }, use) => use(new MyAccountPage(page)),
 	participantDetails: async ({ page }, use) => use(new ParticipantDetailsPage(page)),
 	participantForm: async ({ page }, use) => use(new ParticipantFormPage(page)),
 	participantsList: async ({ page }, use) => use(new ConfigurationListPage(page, 'participants')),
+	participantsMonitoring: async ({ page }, use) => use(new ParticipantsMonitoringPage(page)),
 	profileInvitationForm: async ({ page }, use) => use(new ProfileInvitationFormPage(page)),
 	profilesList: async ({ page }, use) => use(new ProfilesListPage(page)),
 	projectForm: async ({ page }, use) => use(new ProjectFormPage(page)),

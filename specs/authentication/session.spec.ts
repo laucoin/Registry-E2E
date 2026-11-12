@@ -48,4 +48,20 @@ test.describe('Session', { tag: '@exclusive' }, () => {
 			await expect(globalError.callout).toContainText('Ton compte a été bloqué');
 		});
 	});
+
+	test('AUTH-06 · the session survives a reload and an expired access token is refreshed', async ({ session }) => {
+		await test.step('Sign in then reload', async () => {
+			await session.visit('/login');
+			await session.signIn('participant');
+			await expect(session.accountMenu).toBeVisible();
+			await session.reload();
+			await expect(session.accountMenu).toBeVisible();
+		});
+
+		await test.step('Without access token, the session goes on', async () => {
+			await session.expireAccessToken();
+			await session.visit('/my-account/invitations');
+			await expect(session.accountMenu).toBeVisible();
+		});
+	});
 });

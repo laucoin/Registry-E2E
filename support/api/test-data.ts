@@ -4,7 +4,7 @@ import { randomUUID } from 'node:crypto';
 
 import type { Account } from '@support/accounts';
 import { ApiClient } from '@support/api/client';
-import { DAY_MS, isoDate } from '@support/dates';
+import { type ApiDateTime, DAY_MS, isoDate } from '@support/dates';
 
 export type ProjectOption = 'VEHICLE' | 'ACTIVITY' | 'COMMUNICATION' | 'ALERT';
 export type ProjectRole = 'PROJECT_ADMINISTRATOR' | 'PROJECT_COORDINATOR' | 'PROJECT_PARTICIPANT';
@@ -23,6 +23,7 @@ export interface ParticipantMovement {
 }
 
 export interface ParticipantState {
+	lastName: string;
 	effectiveArrival: string | null;
 	effectiveDeparture: string | null;
 }
@@ -145,25 +146,34 @@ export class TestData {
 	}
 
 	/**
-	 * Donne à un autre compte un profil dans le projet et, sauf indication contraire, lui fait accepter
-	 * l'invitation (un compte de départ n'est invité qu'aux projets de départ).
+	 * Donne à un autre compte un profil dans le projet, avec une plage d'accès au besoin, et, sauf indication contraire,
+	 * lui fait accepter l'invitation (un compte de départ n'est invité qu'aux projets de départ).
 	 */
-	public async invite(projectId: string, account: Account, role: ProjectRole, accept = true): Promise<void> {
+	public async invite(
+		projectId: string,
+		account: Account,
+		role: ProjectRole,
+		accept = true,
+		access: { startAccess?: ApiDateTime; endAccess?: ApiDateTime } = {},
+	): Promise<void> {
 		const invitee = await ApiClient.as(account);
 		try {
 			const { email } = await invitee.send<{ email: string }>('GET', '/authentication/user/current');
-			await this.api.send('POST', `/projects/${projectId}/profiles`, { emails: [email], role });
-			if (!accept) return;
-			const mine = await invitee.send<{ content: { id: string; project: { id: string } }[] }>(
-				'GET',
-				'/users/profiles?size=100',
-			);
-			const profile = mine.content.find((candidate) => candidate.project.id === projectId);
-			if (!profile) throw new Error(`No invitation to project ${projectId} found for "${account}"`);
-			await invitee.send('POST', `/users/profiles/${profile.id}/accept/true`);
+			await this.api.send('POST', `/projects/${projectId}/profiles`, { emails: [email], role, ...access });
+			if (accept) await this._acceptInvitation(invitee, projectId, account);
 		} finally {
 			await invitee.dispose();
 		}
+	}
+
+	private async _acceptInvitation(invitee: ApiClient, projectId: string, account: Account): Promise<void> {
+		const mine = await invitee.send<{ content: { id: string; project: { id: string } }[] }>(
+			'GET',
+			'/users/profiles?size=100',
+		);
+		const profile = mine.content.find((candidate) => candidate.project.id === projectId);
+		if (!profile) throw new Error(`No invitation to project ${projectId} found for "${account}"`);
+		await invitee.send('POST', `/users/profiles/${profile.id}/accept/true`);
 	}
 
 	public participant(projectId: string, overrides: Record<string, unknown> = {}): Promise<Created> {
