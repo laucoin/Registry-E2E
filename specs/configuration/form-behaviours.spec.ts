@@ -83,4 +83,27 @@ test.describe('Edition conflicts', () => {
 			expect(vehicle.model).toBe('Trafic');
 		});
 	});
+
+	test('CON-02 · saving an element deleted meanwhile by someone else shows a message in the form', async ({
+		data,
+		vehicleForm: form,
+		vehiclesList: list,
+	}) => {
+		const project = await data.project(['VEHICLE']);
+		const plate = licensePlate();
+		const { id } = await data.vehicle(project.id, { licensePlate: plate, brand: 'Renault', model: 'Master' });
+
+		await test.step('Someone else deletes the vehicle while its form is open', async () => {
+			await list.goto(project.id);
+			await list.run(plate, 'edit');
+			await expect(form.model).toHaveValue('Master');
+			await data.api.send('DELETE', `/projects/${project.id}/vehicles/${id}`);
+		});
+
+		await test.step('Saving shows the message inside the form', async () => {
+			await form.fill({ model: 'Kangoo' });
+			await form.submitButton.click();
+			await expect(form.error).toBeVisible();
+		});
+	});
 });

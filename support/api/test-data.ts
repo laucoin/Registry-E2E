@@ -90,6 +90,18 @@ export class TestData {
 		return profile.id;
 	}
 
+	/** L'instant, en millisecondes, où se termine l'accès d'un compte de départ à un projet. */
+	public async accessEndOf(projectId: string, account: Account): Promise<number> {
+		const { email } = await this.userOf(account);
+		const page = await this.api.send<{ content: { user: { email: string }; endAccess?: ApiDateTime }[] }>(
+			'GET',
+			`/projects/${projectId}/profiles?size=100`,
+		);
+		const end = page.content.find((profile) => profile.user.email === email)?.endAccess;
+		if (!end) throw new Error(`No access end for "${account}" in project ${projectId}`);
+		return Date.parse(`${end.date}T${end.time}`);
+	}
+
 	/** Ajoute le projet aux favoris du compte de ce `TestData`. */
 	public favorite(projectId: string): Promise<unknown> {
 		return this.api.send('POST', `/projects/${projectId}/favorite`);
